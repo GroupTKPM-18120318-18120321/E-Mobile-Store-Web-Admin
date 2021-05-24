@@ -1,0 +1,119 @@
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary">Danh sách nhà sản xuất</h4>
+        <br>
+        <div class="mr-auto mt-10 d-inline">
+            <a class="btn btn-primary btn-rounded" data-toggle="modal" data-target="#addNewManufacturerModal">
+                <i class="fas fa-plus-circle"></i> Thêm nhà sản xuất
+            </a>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="addNewManufacturerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form action="/list-manufacturers/add" method="POST">
+                        <div class="modal-header">
+                            <h5 class="modal-title font-weight-bold" id="exampleModalLabel">Thêm nhà sản xuất</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="text" class="form-control" placeholder="Nhập tên nhà sản xuất" name="newManufacturer" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                            <button type="submit" class="btn btn-primary">Thêm</button>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-4 col-md-7 col-12">
+                <table class="table table-hover table-bordered table-manufacturers" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr class="text-center">
+                            <th>Số thứ tự</th>
+                            <th>Tên nhà sản xuất</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {{#each manufacturers}}
+                            <tr class="text-center align-middle row-manufacturer" data-toggle="modal" data-target="#renameManufacturerModal">
+                                <td class="manufacturerID" hidden>{{_id}}</td>
+                                <td class="align-middle text-center stt"></td>
+                                <td>{{manufacturer}}</td>
+                            </tr>
+        
+                        {{/each}}
+                    </tbody>
+                    <!-- Modal -->
+                    <div class="modal fade" id="renameManufacturerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <form action="/list-manufacturers/rename/{{_id}}?_method=PUT" method="POST">
+                                    <input type="hidden" name="_method" value="PUT">
+                                    <input type="hidden" name="manufacturerId" id="manufacturerId" value="">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title font-weight-bold" id="exampleModalLabel">Đổi tên nhà sản xuất</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="text" class="form-control" placeholder="Nhập tên mới" name="newManufacturerName" required>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                        <button type="submit" class="btn btn-primary">Lưu</button>
+                                    </div>
+                                </form>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </table>
+            </div>
+            
+
+            <div class="col-lg-3">
+                
+            </div>
+        </div>
+        
+        {{!-- <div>
+            <nav aria-label="...">
+                <ul class="pagination">
+
+                    <li class="page-item {{#unless canGoPrev}}disabled{{/unless}}">
+                        <a class="page-link" href="?page={{prevPage}}">Previous</a>
+                    </li>
+                    {{#each pageItem}}
+                    {{#if isActive}}
+                    <li class="page-item active">
+                        <span class="page-link">
+                            {{value}}
+                            <span class="sr-only">(current)</span>
+                        </span>
+                    </li>
+                    {{else}}
+                    <li class="page-item"><a class="page-link" href="?page={{value}}">{{value}}</a></li>
+                    {{/if}}
+                    {{/each}}
+
+
+                    <li class="page-item {{#unless canGoNext}}disabled{{/unless}}">
+                        <a class="page-link" href="?page={{nextPage}}">Next</a>
+                    </li>
+
+                </ul>
+            </nav>
+        </div>--}}
+    </div>
+</div>

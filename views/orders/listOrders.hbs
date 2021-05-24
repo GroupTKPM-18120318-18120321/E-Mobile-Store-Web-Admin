@@ -1,0 +1,70 @@
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary">Danh sách đơn hàng</h4>
+        <br>
+        
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr class="text-center">
+                        <th>Mã đơn hàng</th>
+                        <th>Ngày đặt hàng</th>
+                        <th>Tên khách hàng</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái đơn hàng</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {{#each orders}}
+                    <tr class="text-center align-middle">
+                        <td class="align-middle text-left"><a href="/list-orders/order-detail/{{_id}}">{{_id}}</a></td>
+                        <td class="align-middle">{{orderTime}}</td>
+                        <td class="align-middle text-left">{{idCustomer.name}}</td>
+                        <td class="align-middle">{{total}}</td>
+                        <td class="align-middle">{{orderStatus.statusName}}</td>
+                    </tr>
+                    {{/each}}
+
+
+                </tbody>
+            </table>
+
+            {{#if isPagination}}
+            <div>
+                <nav aria-label="...">
+                    <ul class="pagination">
+
+                        <li class="page-item {{#unless canGoPrev}}disabled{{/unless}}">
+                            <a class="page-link" href="?page={{prevPage}}">Previous</a>
+                        </li>
+                        {{#each pageItem}}
+                        {{#if isActive}}
+                        <li class="page-item active">
+                            <span class="page-link">
+                                {{value}}
+                                <span class="sr-only">(current)</span>
+                            </span>
+                        </li>
+                        {{else}}
+                        <li class="page-item"><a class="page-link" href="?page={{value}}">{{value}}</a></li>
+                        {{/if}}
+                        {{/each}}
+
+
+                        <li class="page-item {{#unless canGoNext}}disabled{{/unless}}">
+                            <a class="page-link" href="?page={{nextPage}}">Next</a>
+                        </li>
+
+                    </ul>
+                </nav>
+
+            </div>
+            {{/if}}
+           
+        </div>
+    </div>
+</div>

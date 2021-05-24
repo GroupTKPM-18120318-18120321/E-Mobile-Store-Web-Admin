@@ -1,0 +1,30 @@
+.table > tr > td.align-middle {
+    text-align: center; 
+}
+
+#dropdown-view-product:hover{
+    background-color:blue;
+    color: #ffffff;
+}
+
+#dropdown-edit-product:hover {
+    background-color:  rgb(0, 192, 118);
+    color: #ffffff;
+}
+
+#dropdown-delete-product:hover {
+    background-color: red;
+    color: #ffffff;
+}
+
+.table-manufacturers, .table-order-detail {
+    counter-reset: rowNumber+1;
+}
+
+.table-manufacturers tr:not(:first-child), .table-order-detail tr:not(:first-child) {
+    counter-increment: rowNumber;
+}
+
+.table-manufacturers tr td.stt::before, .table-order-detail tr td.stt::before {
+    content: counter(rowNumber);
+}

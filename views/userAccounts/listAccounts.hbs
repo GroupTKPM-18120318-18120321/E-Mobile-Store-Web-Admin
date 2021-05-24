@@ -1,0 +1,211 @@
+<!-- DataTales Example -->
+<div class="card shadow mb-4" id="loadTitle">
+    <div class="card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary">Danh sách tài khoản người dùng</h4>
+        <br>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr  class="text-center">
+                        <th>Tên tài khoản</th>
+                        {{!-- <th>Phân quyền</th> --}}
+                        <th>Email</th>
+                        <th>Số điện thoại</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {{#each accounts}}
+                    <tr id = "{{account._id}}" class="text-center align-middle" >
+                        <input type="hidden" value="{{account._id}}" class="row-account-user">
+                        {{!-- <input type="text" value="{{account.role.roleName}}" class="accountRole"> --}}
+                        <td class="align-middle text-left" onchange="setTitleYourAccount()">
+                            {{#if account.accountState}}
+                                <i class="fas fa-user-lock text-danger"></i>
+                            {{else}}
+                                {{#if accRole.admin}}
+                                    <i class="fas fa-headset text-success"></i>
+                                {{/if}}
+                                {{#if accRole.superAdmin}}
+                                    <i class="fas fa-headset text-warning"></i>
+                                {{/if}}
+                                {{#if accRole.user}}
+                                    <i class="fas fa-user text-success"></i>
+                                {{/if}}
+                            {{/if}}
+
+                            {{account.name}}
+                            <span class="notify text-primary"></span>
+
+                        </td>
+                        <td class="align-middle">{{account.email}}</td>
+                        <td class="align-middle">{{account.phoneNumber}}</td>
+                        <td class="align-middle">
+                            <!-- <button class="btn btn-success"><i class="fas fa-edit"></i></button> -->
+                            <div class="dropdown">
+                                <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span><i class="fas fa-edit"></i></span>
+                                </button>
+                                <div class="dropdown-menu aaa" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="/list-accounts/{{account._id}}">Xem thông tin chi tiết</a>
+                                    
+                                    <div class=" adminMenu">
+                                        {{#if accRole.user}}
+                                            {{#if account.accountState}}
+                                                <a class="dropdown-item hide-item"
+                                                    onclick="changeAccountState('{{account._id}}','{{account.accountState}}'); ">Mở khóa tài khoản</a>
+                                            {{else}}
+                                                <a class="dropdown-item hide-item" id="dropdown-delete-product"
+                                                    onclick="changeAccountState('{{account._id}}','{{account.accountState}}');">Khóa tài khoản</a>
+                                            {{/if}}
+                                        {{/if}}
+                                    </div>
+
+                                    <div class=" superAdminMenu">
+                                        {{#if accRole.user}}
+                                            <a class="dropdown-item hide-item" 
+                                                onclick="changeAccountRole('{{account._id}}','{{account.role.roleName}}'); ">Cấp quyền quản trị viên</a>
+                                        {{/if}}
+                                            
+                                        {{#if accRole.admin}}
+                                            <a class="dropdown-item hide-item xoa-quyen" id="dropdown-delete-product"
+                                            onclick="changeAccountRole('{{account._id}}','{{account.role.roleName}}'); ">Xóa quyền quản trị viên</a>
+                                        {{/if}}
+
+                                        {{#unless accRole.superAdmin}}
+                                            {{#if account.accountState}}
+                                                <a class="dropdown-item hide-item"
+                                                    onclick="changeAccountState('{{account._id}}','{{account.accountState}}'); ">Mở khóa tài khoản</a>
+                                            {{else}}
+                                                <a class="dropdown-item hide-item" id="dropdown-delete-product"
+                                                    onclick="changeAccountState('{{account._id}}','{{account.accountState}}');">Khóa tài khoản</a>
+                                            {{/if}}
+                                        {{/unless}}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {{/each}}
+
+
+                </tbody>
+            </table>
+
+            {{#if isPagination}}
+            <div>
+                <nav aria-label="...">
+                    <ul class="pagination">
+
+                        <li class="page-item {{#unless canGoPrev}}disabled{{/unless}}">
+                            <a class="page-link" href="?page={{prevPage}}">Previous</a>
+                        </li>
+                        {{#each pageItem}}
+                        {{#if isActive}}
+                        <li class="page-item active">
+                            <span class="page-link">
+                                {{value}}
+                                <span class="sr-only">(current)</span>
+                            </span>
+                        </li>
+                        {{else}}
+                        <li class="page-item"><a class="page-link" href="?page={{value}}">{{value}}</a></li>
+                        {{/if}}
+                        {{/each}}
+
+
+                        <li class="page-item {{#unless canGoNext}}disabled{{/unless}}">
+                            <a class="page-link" href="?page={{nextPage}}">Next</a>
+                        </li>
+
+                    </ul>
+                </nav>
+
+            </div>
+            {{/if}}
+            
+        </div>
+    </div>
+</div>
+
+<script type="text/x-handlebars-template" id="templateAccount">
+    <input type="hidden" value="\{{_id}}" class="row-account-user">
+
+    <td class="align-middle text-left"  onchange="setTitleYourAccount();">
+        \{{#if accountState}}
+            <i class="fas fa-user-lock text-danger"></i>
+        \{{else}}
+            \{{#if accRole_admin}}
+                <i class="fas fa-headset text-success"></i>
+            \{{/if}}
+            \{{#if accRole_superAdmin}}
+                <i class="fas fa-headset text-warning"></i>
+            \{{/if}}
+            \{{#if accRole_user}}
+                <i class="fas fa-user text-success"></i>
+            \{{/if}}
+        \{{/if}}
+
+        \{{name}}
+        <span class="notify text-primary"></span>
+
+    </td>
+    <td class="align-middle">\{{email}}</td>
+    <td class="align-middle">\{{phoneNumber}}</td>
+    <td class="align-middle">
+        <!-- <button class="btn btn-success"><i class="fas fa-edit"></i></button> -->
+        <div class="dropdown">
+            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span><i class="fas fa-edit"></i></span>
+            </button>
+            <div class="dropdown-menu aaa" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="/list-accounts/\{{_id}}">Xem thông tin chi tiết</a>
+                
+                <div class=" adminMenu">
+                    \{{#if accRole_user}}
+                        
+                            \{{#if accountState}}
+                                <a class="dropdown-item hide-item"
+                                    onclick="changeAccountState('\{{_id}}','\{{accountState}}'); ">Mở khóa tài khoản</a>
+                            \{{else}}
+                                <a class="dropdown-item hide-item" id="dropdown-delete-product"
+                                    onclick="changeAccountState('\{{_id}}','\{{accountState}}');">Khóa tài khoản</a>
+                            \{{/if}}
+                        
+                    \{{/if}}
+                </div>
+
+                <div class=" superAdminMenu">
+                    \{{#if accRole_user}}
+                        <a class="dropdown-item hide-item" 
+                            onclick="changeAccountRole('\{{_id}}','\{{role}}'); ">Cấp quyền quản trị viên</a>
+                    \{{/if}}
+                        
+                    \{{#if accRole_admin}}
+                        <a class="dropdown-item hide-item xoa-quyen" id="dropdown-delete-product"
+                        onclick="changeAccountRole('\{{_id}}','\{{role}}'); ">Xóa quyền quản trị viên</a>
+                    \{{/if}}
+
+                    \{{#unless accRole_superAdmin}}
+                        \{{#if accountState}}
+                            <a class="dropdown-item hide-item"
+                                onclick="changeAccountState('\{{_id}}','\{{accountState}}'); ">Mở khóa tài khoản</a>
+                        \{{else}}
+                            <a class="dropdown-item hide-item" id="dropdown-delete-product"
+                                onclick="changeAccountState('\{{_id}}','\{{accountState}}');">Khóa tài khoản</a>
+                        \{{/if}}
+                    \{{/unless}}
+                    
+
+                </div>
+                
+
+            </div>
+        </div>
+    </td>
+</script>

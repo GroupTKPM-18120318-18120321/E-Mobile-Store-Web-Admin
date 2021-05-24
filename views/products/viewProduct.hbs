@@ -1,0 +1,96 @@
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        
+        <div class="row">
+            <div class="col-lg-6">
+                <h4 class="m-0 font-weight-bold text-primary">Thông tin sản phẩm</h4>
+            </div>
+            <div class="col-lg-6 font-italic">Ngày thêm: {{product.releaseDay}}</div>
+        </div>                       
+    </div>
+    <div class="card-body">
+        <div class="container">                                
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr class="text-center">
+                            <th colspan="2">Thông tin chung</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="align-middle">
+                            <td class="align-middle text-left">Tên sản phẩm</td>
+                            <td class="align-middle text-left">{{product.name}}</td>
+                        </tr>
+                        <tr class="align-middle">
+                            <td class="align-middle text-left">Nhà sản xuất</td>
+                            <td class="align-middle text-left">{{product.name}}</td>
+                        </tr>
+                        <tr class="align-middle">
+                            <td class="align-middle text-left">Số lượng hàng</td>
+                            <td class="align-middle text-left">{{product.quantityAvailable}}</td>
+                        </tr>
+                        <tr class="align-middle">
+                            <td class="align-middle text-left">Giá bán</td>
+                            <td class="align-middle text-left">{{product.baseprice}}</td>
+                        </tr>
+                        <tr class="align-middle">
+                            <td class="align-middle text-left">Giá giảm</td>
+                            <td class="align-middle text-left">{{product.discountprice}}</td>
+                        </tr>
+                    </tbody>
+
+                    <thead>
+                        <tr class="text-center">
+                            <th colspan="2">Thông số kỹ thuật</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="align-middle">
+                            <td class="align-middle text-left">Màn hình</td>
+                            <td class="align-middle text-left">{{product.screen}}</td>
+                        </tr>
+                        <tr class="align-middle">
+                            <td class="align-middle text-left">Camera</td>
+                            <td class="align-middle text-left">{{product.camera}}</td>
+                        </tr>
+                        <tr class="align-middle">
+                            <td class="align-middle text-left">CPU</td>
+                            <td class="align-middle text-left">{{product.processor}}</td>
+                        </tr>
+                        <tr class="align-middle">
+                            <td class="align-middle text-left">Dung lượng lưu trữ</td>
+                            <td class="align-middle text-left">{{product.storage}}</td>
+                        </tr>
+                        <tr class="align-middle">
+                            <td class="align-middle text-left">Dung lượng pin</td>
+                            <td class="align-middle text-left">{{product.battery}}</td>
+                        </tr>
+                        <tr class="align-middle">
+                            <td class="align-middle text-left">Mô tả sản phẩm</td>
+                            <td class="align-middle text-left">{{product.description}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4 col-12">
+                    <div>Ảnh minh họa:</div>
+                    <img src={{product.cover}} width="100px" height="150px">
+                </div>
+                <div class="col-lg-8 col-12">
+                    <div>Ảnh chi tiết (Tối đa 3):</div>
+                        {{#each product.detailImgs}}
+                            <img class="mr-2 mb-2" src={{this}} width="100px" height="150px" >
+                        {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer text-center">
+        <a class="btn btn-success mr-2" href="/list-products/edit/{{product._id}}">Chỉnh sửa</a>
+        <a class="btn btn-info" href="../">Quay lại</a>    
+    </div>
+</div>
