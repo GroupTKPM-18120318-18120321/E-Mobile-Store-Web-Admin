@@ -2,6 +2,14 @@ var express = require('express');
 var router = express.Router();
 const productController= require('../controllers/productsController');
 
+router.post('/lap-phieu-nhap-hang', productController.addPhieuNhapHangToDB);
+
+router.post('/add-new-product-nhap-hang', productController.addProductToDatabaseAndNhapHang);
+
+router.get('/lap-phieu-nhap-hang', productController.hienthiPhieuNhapHang);
+
+router.get('/add-new-product-nhap-hang', productController.displayAddProductToNhapHang);
+
 router.get('/add-new-product', productController.displayAddProduct);
 
 router.post('/add-new-product', productController.addProductToDatabase);

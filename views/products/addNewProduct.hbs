@@ -1,127 +1,147 @@
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h4 class="m-0 font-weight-bold text-primary">Thêm sản phẩm</h4>                       
+        <h4 class="m-0 font-weight-bold text-primary">Thêm sản phẩm</h4>
     </div>
     <div class="card-body">
         <div class="container">
-            <form action="/list-products/add-new-product" method="POST" enctype="multipart/form-data" id="add-new-product-form">                                    
-                <div class="row">
-                    <!--Thông tin chung-->
-                    <div class="form-row col-lg-6 col-12 h-100">
-                        <div><b>Thông tin chung</b></div>
-                        <br>
-                        <br>
-                        {{!-- <div class="form-row col-12">
-                            <div class="form-group col-lg-6 col-12">
-                                <label for="productID">Mã sản phẩm:</label>
-                                <input type="text" class="form-control" placeholder="" id="productID" name="productId">
+            {{!-- <form action="/list-products/add-new-product" method="POST" enctype="multipart/form-data"
+                id="add-new-product-form">--}}
+                <form action="{{pathAddProductForm}}" method="POST" enctype="multipart/form-data"
+                    id="add-new-product-form">
+                    <div class="row">
+                        <!--Thông tin chung-->
+                        <div class="form-row col-lg-6 col-12 h-100">
+                            <div><b>Thông tin chung</b></div>
+                            <br>
+                            <br>
+                            {{!-- <div class="form-row col-12">
+                                <div class="form-group col-lg-6 col-12">
+                                    <label for="productID">Mã sản phẩm:</label>
+                                    <input type="text" class="form-control" placeholder="" id="productID"
+                                        name="productId">
+                                </div>
+                            </div> --}}
+                            <div class="form-row col-12">
+                                <div class="form-group col-12">
+                                    <label for="productName">Tên sản phẩm:</label>
+                                    <input type="text" class="form-control" placeholder="" id="productName"
+                                        name="productName" maxlength="50" required>
+                                </div>
                             </div>
-                        </div> --}}
-                        <div class="form-row col-12">
-                            <div class="form-group col-12">
-                                <label for="productName">Tên sản phẩm:</label>
-                                <input type="text" class="form-control" placeholder="" id="productName" name="productName" maxlength="50" required>
-                            </div>
-                        </div>
-                        <div class="form-row col-12">
-                            <div class="form-group col-lg-6 col-md-6">
-                                <label for="manufacturer">Nhà sản xuất:</label>
-                                {{!-- <input type="text" class="form-control" placeholder="" id="manufacturer" name="manufacturer"> --}}
-                                <select class="custom-select mr-sm-2" id="manufacturer" name="manufacturer" form="add-new-product-form" required>
-                                    <option selected value="" style="display: none">Chọn</option>
-                                    {{#each manufacturer}}
+                            <div class="form-row col-12">
+                                <div class="form-group col-lg-6 col-md-6">
+                                    <label for="manufacturer">Nhà sản xuất:</label>
+                                    {{!-- <input type="text" class="form-control" placeholder="" id="manufacturer"
+                                        name="manufacturer"> --}}
+                                    <select class="custom-select mr-sm-2" id="manufacturer" name="manufacturer"
+                                        form="add-new-product-form" required>
+                                        <option selected value="" style="display: none">Chọn</option>
+                                        {{#each manufacturer}}
                                         <option value={{_id}}>{{manufacturer}}</option>
-                                    {{/each}}
-                                </select>
-                            </div>
-                            <div class="form-group col-lg-5 col-md-6 offset-lg-1">
-                                <label for="quantityAvailable">Số lượng hàng:</label>
-                                <input type="number" class="form-control" placeholder="" id="quantityAvailable" name="quantityAvailable" required>
-                            </div>
-                        </div>
-                        <div class="form-row col-12">
-                            <div class="form-group col-lg-6">
-                                <label for="productBasePrice">Giá bán:</label>
-                                <input type="number" class="form-control" placeholder="" id="productBasePrice" name="productBasePrice" required>
-                            </div>
-                            <div class="form-group col-lg-6">
-                                <label for="productDiscountPrice">Giá giảm:</label>
-                                <input type="number" class="form-control" placeholder="" id="productDiscountPrice" name="productDiscountPrice">
-                            </div>
-                        </div>
-                        <div class="form-row col-12 mb-5">
-                            <div class="form-group col-12">
-                                <label for="productImg">Ảnh minh họa:</label>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input mb-3" id="productImg" name="filename" 
-                                        onchange="readOneURL(this);" accept="image/*" required>
-                                    <img class="" id="previewMainImg" src="#" alt="Ảnh" width="100px" height="150px" style="display: none;"/>
-                                    <label class="custom-file-label text-truncate" for="customFile"></label>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <div class="form-group col-lg-5 col-md-6 offset-lg-1">
+                                    <label for="quantityAvailable">Số lượng hàng:</label>
+                                    <input type="number" min='0' class="form-control" placeholder=""
+                                        id="quantityAvailable" name="quantityAvailable" required>
                                 </div>
                             </div>
-                            
-                        </div>
-                        <div class="form-row col-12 mb-5 mt-2">
-                            <div class="form-group col-12">
-                                <label for="productDetailImg">Ảnh chi tiết (Tối đa 3):</label>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input mb-3 form-control-file input-files" id="productDetailImg" 
-                                        name="filenameArr" multiple onchange="readMultipleURL(this);" accept="image/*" required>
-                                    <label class="custom-file-label text-truncate upload-files" for="customFile"></label>
-                                    <span id="previewDetailImg" />
+                            <div class="form-row col-12">
+                                <div class="form-group col-lg-6">
+                                    <label for="productBasePrice">Giá bán:</label>
+                                    <input type="number" min='0' class="form-control" placeholder=""
+                                        id="productBasePrice" name="productBasePrice" required>
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <label for="productDiscountPrice">Giá giảm:</label>
+                                    <input type="number" min='0' class="form-control" placeholder=""
+                                        id="productDiscountPrice" name="productDiscountPrice">
                                 </div>
                             </div>
-                        </div> 
-                    </div>
+                            <div class="form-row col-12 mb-5">
+                                <div class="form-group col-12">
+                                    <label for="productImg">Ảnh minh họa:</label>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input mb-3" id="productImg"
+                                            name="filename" onchange="readOneURL(this);" accept="image/*" required>
+                                        <img class="" id="previewMainImg" src="#" alt="Ảnh" width="100px" height="150px"
+                                            style="display: none;" />
+                                        <label class="custom-file-label text-truncate" for="customFile"></label>
+                                    </div>
+                                </div>
 
-                    <!--Thông số kỹ thuật-->
-                    <div class="form-row col-lg-6 col-12 h-100">
-                        <div><b>Thông số kỹ thuật</b></div>
-                        <br>
-                        <br>
-                        <div class="form-row col-12">
-                            <div class="form-group col-12">
-                                <label for="productScreen">Màn hình:</label>
-                                <input type="text" class="form-control" placeholder="" id="productScreen" name="productScreen">
+                            </div>
+                            <div class="form-row col-12 mb-5 mt-2">
+                                <div class="form-group col-12">
+                                    <label for="productDetailImg">Ảnh chi tiết (Tối đa 3):</label>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input mb-3 form-control-file input-files"
+                                            id="productDetailImg" name="filenameArr" multiple
+                                            onchange="readMultipleURL(this);" accept="image/*" required>
+                                        <label class="custom-file-label text-truncate upload-files"
+                                            for="customFile"></label>
+                                        <span id="previewDetailImg" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-row col-12">
-                            <div class="form-group col-12">
-                                <label for="productCamera">Camera:</label>
-                                <input type="text" class="form-control" placeholder="" id="productCamera" name="productCamera">
+
+                        <!--Thông số kỹ thuật-->
+                        <div class="form-row col-lg-6 col-12 h-100">
+                            <div><b>Thông số kỹ thuật</b></div>
+                            <br>
+                            <br>
+                            <div class="form-row col-12">
+                                <div class="form-group col-12">
+                                    <label for="productScreen">Màn hình:</label>
+                                    <input type="text" class="form-control" placeholder="" id="productScreen"
+                                        name="productScreen">
+                                </div>
+                            </div>
+                            <div class="form-row col-12">
+                                <div class="form-group col-12">
+                                    <label for="productCamera">Camera:</label>
+                                    <input type="text" class="form-control" placeholder="" id="productCamera"
+                                        name="productCamera">
+                                </div>
+                            </div>
+                            <div class="form-row col-12">
+                                <div class="form-group col-lg-6 col-12">
+                                    <label for="productProcessor">CPU:</label>
+                                    <input type="text" class="form-control" placeholder="" id="productProcessor"
+                                        name="productProcessor">
+                                </div>
+                            </div>
+                            <div class="form-row col-12">
+                                <div class="form-group col-lg-6 col-12">
+                                    <label for="productStorage">Dung lượng lưu trữ:</label>
+                                    <input type="text" class="form-control" placeholder="" id="productStorage"
+                                        name="productStorage">
+                                </div>
+                            </div>
+                            <div class="form-row col-12">
+                                <div class="form-group col-12">
+                                    <label for="productBattery">Dung lượng pin:</label>
+                                    <input type="text" class="form-control col-lg-6 col-md-6 col-12" placeholder=""
+                                        id="productBattery" name="productBattery">
+                                </div>
+                            </div>
+                            <div class="form-row col-12">
+                                <div class="form-group col-12">
+                                    <label for="description">Mô tả sản phẩm:</label>
+                                    <textarea class="form-control col-12" placeholder="" id="description"
+                                        name="description" rows="4" form="add-new-product-form" required></textarea>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-row col-12">
-                            <div class="form-group col-lg-6 col-12">
-                                <label for="productProcessor">CPU:</label>
-                                <input type="text" class="form-control" placeholder="" id="productProcessor" name="productProcessor">
-                            </div>
-                        </div>
-                        <div class="form-row col-12">
-                            <div class="form-group col-lg-6 col-12">
-                                <label for="productStorage">Dung lượng lưu trữ:</label>
-                                <input type="text" class="form-control" placeholder="" id="productStorage" name="productStorage">
-                            </div>
-                        </div>
-                        <div class="form-row col-12">
-                            <div class="form-group col-12">
-                                <label for="productBattery">Dung lượng pin:</label>
-                                <input type="text" class="form-control col-lg-6 col-md-6 col-12" placeholder="" id="productBattery" name="productBattery">
-                            </div>
-                        </div>
-                        <div class="form-row col-12">
-                            <div class="form-group col-12">
-                                <label for="description">Mô tả sản phẩm:</label>
-                                <textarea class="form-control col-12" placeholder="" id="description" name="description" rows="4" form="add-new-product-form" required></textarea>
-                            </div>
-                        </div>     
                     </div>
-                </div>
-                <div class="form-group mt-3">
-                    <button type="submit" class="btn btn-primary mr-2" >Thêm</button>
-                    <a class="btn btn-danger" href="/list-products">Hủy</a>
-                </div>      
-            </form>   
+                    <div class="form-group mt-3">
+                        <button type="submit" class="btn btn-primary mr-2">Thêm</button>
+                        {{!-- <a class="btn btn-danger" href="/list-products">Hủy</a> --}}
+                        <a class="btn btn-danger" href="{{pathCancelButton}}">Hủy</a>
+                    </div>
+                </form>
         </div>
     </div>
 </div>

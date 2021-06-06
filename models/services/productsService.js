@@ -2,7 +2,7 @@ require("dotenv").config();
 const formidable = require('formidable');
 const path = require('path');
 const mv = require('mv');
-const cloudinary = require('cloudinary').v2; 
+const cloudinary = require('cloudinary').v2;
 const fse = require('fs-extra');
 
 cloudinary.config({
@@ -32,9 +32,9 @@ exports.findOne = async (filter) => {
 }
 
 //Upload and get a image link
-exports.uploadImg = async (coverImg, cloudinaryFolder,res, next) => {
+exports.uploadImg = async (coverImg, cloudinaryFolder, res, next) => {
     //const fileName = coverImg.path.split('\\').pop() + '.' + coverImg.name.split('.').pop();
-    
+
     //const filePath = path.join(__dirname, '/../public/img/products/upload/' + fileName);
     //const filePath = path.join(__dirname, '/../public/img/' + file_path + fileName);
     //console.log("filePath: " + filePath);
@@ -52,7 +52,7 @@ exports.uploadImg = async (coverImg, cloudinaryFolder,res, next) => {
     // const publicID = 'products/' + coverImg.path.split('\\').pop();
     const publicID = cloudinaryFolder + '/' + coverImg.path.split('\\').pop();
     await new Promise((resolve, reject) => {
-        cloudinary.uploader.upload(coverImg.path, { public_id: publicID}, (err, result) => {
+        cloudinary.uploader.upload(coverImg.path, { public_id: publicID }, (err, result) => {
             if (err) {
                 return reject(err);
             }
@@ -65,42 +65,42 @@ exports.uploadImg = async (coverImg, cloudinaryFolder,res, next) => {
     return cloudinary.url(publicID);
 }
 
-exports.uploadImgs = async(files, cloudinaryFolder, res, next)=>{
+exports.uploadImgs = async (files, cloudinaryFolder, res, next) => {
     let imgLinkArr = [];
 
     //Detail images
-    for (let i = 0; i < files.length; i++){
-        if (files[i].size > 0){
+    for (let i = 0; i < files.length; i++) {
+        if (files[i].size > 0) {
             imgLinkArr.push(await this.uploadImg(files[i], cloudinaryFolder));
         }
-    } 
+    }
 
-    return imgLinkArr; 
+    return imgLinkArr;
 }
 
 //Add new product
 exports.addNewProduct = async (req, res, next) => {
-    const form = formidable({ multiples: true, maxFileSize: 20*1024*1024 });
-    
+    const form = formidable({ multiples: true, maxFileSize: 20 * 1024 * 1024 });
+
     await new Promise((resolve, reject) => {
         form.parse(req, async (err, fields, files) => {
             if (err) {
                 reject(err);
                 return;
             }
-            
+
             const coverImg = files.filename;
             //console.log(coverImg.path);
 
-            if (coverImg && coverImg.size > 0){
-                const mainImgLink = await this.uploadImg(coverImg, 'products');     
+            if (coverImg && coverImg.size > 0) {
+                const mainImgLink = await this.uploadImg(coverImg, 'products');
                 const imgLinkArr = await this.uploadImgs(files.filenameArr, 'products');
 
                 console.log("arr: " + imgLinkArr);
                 const newPostData = {
                     name: fields.productName,
                     baseprice: fields.productBasePrice,
-                    discountprice:fields.productDiscountPrice,
+                    discountprice: fields.productDiscountPrice,
                     cover: mainImgLink,
                     detailImgs: imgLinkArr,
                     idmanufacturer: fields.manufacturer,
@@ -119,9 +119,9 @@ exports.addNewProduct = async (req, res, next) => {
                 const newProduct = new productModel(newPostData);
                 console.log("new product: \n" + newProduct);
                 await newProduct.save();
-                console.log("Save successful!");             
+                console.log("Save successful!");
             }
-          
+
             resolve();
         });
     });
@@ -129,22 +129,22 @@ exports.addNewProduct = async (req, res, next) => {
 
 //Edit product
 exports.editProduct = async (req, res, next) => {
-    const form = formidable({ multiples: true, maxFileSize: 20*1024*1024 });
-    
+    const form = formidable({ multiples: true, maxFileSize: 20 * 1024 * 1024 });
+
     await new Promise((resolve, reject) => {
         form.parse(req, async (err, fields, files) => {
             if (err) {
                 reject(err);
                 //return;
             }
-   
+
             const mainImg = files.filename;
             const detailImg = files.filenameArr;
 
             const editData = {
                 name: fields.productName,
                 baseprice: fields.productBasePrice,
-                discountprice:fields.productDiscountPrice,
+                discountprice: fields.productDiscountPrice,
                 //cover: mainImgLink,
                 //detailImgs: detailImgLink,
                 idmanufacturer: fields.manufacturer,
@@ -162,45 +162,59 @@ exports.editProduct = async (req, res, next) => {
 
             //let mainImgLink;
             //let detailImgLink;
-            
-            if (mainImg && mainImg.size > 0){
+
+            if (mainImg && mainImg.size > 0) {
                 console.log("mainImg");
                 await this.uploadImg(mainImg, 'products')
-                    .then((mainImgLink)=>{
+                    .then((mainImgLink) => {
                         editData.cover = mainImgLink;
                     });
             }
 
-            if (detailImg && detailImg.length > 0){
+            if (detailImg && detailImg.length > 0) {
                 console.log("detailImg");
                 await this.uploadImgs(detailImg, 'products')
-                    .then((detailImgLink)=>{
+                    .then((detailImgLink) => {
                         editData.detailImgs = detailImgLink;
                     })
-                
+
             }
             //console.log(editData);
 
             const IDQuery = fields.productID;
-            await productModel.findOneAndUpdate({_id: IDQuery}, editData, {new: true}, (err, doc) => {
+            await productModel.findOneAndUpdate({ _id: IDQuery }, editData, { new: true }, (err, doc) => {
                 if (err) reject(err);
             });
-          
+
             resolve();
         });
     });
 }
 
-exports.deleteProduct=async (filter)=>{
+exports.deleteProduct = async (filter) => {
     await productModel.findOneAndDelete(filter);
 }
 
-exports.listProduct = async(filter, limit, offset) =>{
-    const option={
+exports.listProduct = async (filter, limit, offset) => {
+    const option = {
         offset: offset,
         limit: limit,
     }
-    const product = await productModel.paginate(filter,option,);
+    const product = await productModel.paginate(filter, option,);
 
     return product;
+}
+
+exports.getListProductsAndManufacturer = async () => {
+    const listProducts = await productModel.find({})
+        .populate({ path: "idmanufacturer" })
+        .exec().then((docs) => {
+            return docs;
+    });
+
+    return listProducts;
+}
+
+exports.addPhieuNhapHang = async (req, res, next) => {
+    
 }

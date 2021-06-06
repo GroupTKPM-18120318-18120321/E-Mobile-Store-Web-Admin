@@ -8,7 +8,7 @@ const productSchema = mongoose.Schema({
     baseprice: {type: String, require: true},
     discountprice: {type: String, require: true},
     cover: {type: String, require: true},
-    idmanufacturer: {type: mongoose.Schema.Types.ObjectId, require: true},
+    idmanufacturer: {type: mongoose.Schema.Types.ObjectId, require: true, ref: 'Manufacturer'},
     battery: {type: String, require: true},
     camera: {type: String, require: true},
     processor: {type: String, require: true},

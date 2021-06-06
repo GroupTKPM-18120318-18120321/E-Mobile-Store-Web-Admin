@@ -1,18 +1,30 @@
 const manufacturerService = require('../models/services/manufacturerService');
 const productsService = require('../models/services/productsService');
+const productModel = require('../models/mongoose/productsModel');
 
 
 exports.displayAddProduct = async(req, res, next)=>{
     // const product = await productsModel.find();
     // console.log(product);
     const manufacturer = await manufacturerService.getListManufacturer();
-    res.render('products/addNewProduct', {manufacturer, js_file: "../js/custom.js"});
+    res.render('products/addNewProduct', {manufacturer, pathAddProductForm: "/list-products/add-new-product", pathCancelButton: "/list-products"});
+}
+
+exports.displayAddProductToNhapHang = async(req, res, next)=>{
+
+    const manufacturer = await manufacturerService.getListManufacturer();
+    res.render('products/addNewProduct', {manufacturer, pathAddProductForm: "/list-products/add-new-product-nhap-hang", pathCancelButton: "/list-products/lap-phieu-nhap-hang"});
 }
 
 exports.addProductToDatabase = async (req, res, next) =>{
     await productsService.addNewProduct(req, res, next);
 
     res.redirect("/list-products");
+}
+
+exports.addProductToDatabaseAndNhapHang = async (req, res, next) =>{
+    await productsService.addNewProduct(req, res, next);
+    res.redirect("/list-products/lap-phieu-nhap-hang");
 }
 
 exports.product = async(req, res, next) => {
@@ -115,3 +127,13 @@ exports.viewProduct = async(req, res, next) => {
 
     res.render('products/viewProduct', {product});
 };
+
+exports.hienthiPhieuNhapHang = async (req, res, next) => {
+    const products = await productsService.getListProductsAndManufacturer();
+    res.render('products/lapPhieuNhapHang', {products, js_file: "../js/custom.js"});
+}
+
+exports.addPhieuNhapHangToDB = async (req, res, next) => {
+    await productsService.addPhieuNhapHang(req, res, next);
+    res.redirect("/list-products");
+}
