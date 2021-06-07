@@ -38,7 +38,7 @@ exports.viewOrderDetail = async(req, res, next) => {
     const offset =(page -1)*10;
 
     const numPage= Math.ceil((await ordersService.countDetailOrder({idOrder:req.params.id}))/limit);
-    console.log((await ordersService.countDetailOrder({idOrder:req.params.id})));
+    //console.log((await ordersService.countDetailOrder({idOrder:req.params.id})));
 
     const pageItem=[]
     for(let i=1;i<=numPage;i++){

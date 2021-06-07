@@ -4,6 +4,7 @@ const path = require('path');
 const mv = require('mv');
 const cloudinary = require('cloudinary').v2;
 const fse = require('fs-extra');
+const mongoose = require('mongoose');
 
 cloudinary.config({
     cloud_name: 'hexadstore',
@@ -13,6 +14,8 @@ cloudinary.config({
 
 const productModel = require('../mongoose/productsModel');
 const { resolve } = require('path');
+
+const goodsReceivedNoteModel = require('../mongoose/goodsReceivedNoteModel');
 
 //Get list of products
 exports.list = async () => {
@@ -27,7 +30,7 @@ exports.find = async (filter) => {
 
 exports.findOne = async (filter) => {
     const result = await productModel.findOne(filter);
-    console.log(result);
+    //console.log(result);
     return result;
 }
 
@@ -164,7 +167,7 @@ exports.editProduct = async (req, res, next) => {
             //let detailImgLink;
 
             if (mainImg && mainImg.size > 0) {
-                console.log("mainImg");
+                //console.log("mainImg");
                 await this.uploadImg(mainImg, 'products')
                     .then((mainImgLink) => {
                         editData.cover = mainImgLink;
@@ -172,7 +175,7 @@ exports.editProduct = async (req, res, next) => {
             }
 
             if (detailImg && detailImg.length > 0) {
-                console.log("detailImg");
+                //console.log("detailImg");
                 await this.uploadImgs(detailImg, 'products')
                     .then((detailImgLink) => {
                         editData.detailImgs = detailImgLink;
@@ -210,11 +213,12 @@ exports.getListProductsAndManufacturer = async () => {
         .populate({ path: "idmanufacturer" })
         .exec().then((docs) => {
             return docs;
-    });
+        });
 
     return listProducts;
 }
 
-exports.addPhieuNhapHang = async (req, res, next) => {
-    
+exports.updateProductQuantity = async (_id, quantity) => {
+    const proudct = await productModel.findById(_id);
+    await productModel.findOneAndUpdate({ _id: _id }, {quantityAvailable: proudct.quantityAvailable + Number(quantity)});
 }

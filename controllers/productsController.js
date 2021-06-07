@@ -1,7 +1,7 @@
 const manufacturerService = require('../models/services/manufacturerService');
 const productsService = require('../models/services/productsService');
 const productModel = require('../models/mongoose/productsModel');
-
+const goodsReceivedNoteService = require('../models/services/goodsReceivedNoteService');
 
 exports.displayAddProduct = async(req, res, next)=>{
     // const product = await productsModel.find();
@@ -75,11 +75,11 @@ exports.product = async(req, res, next) => {
 
 exports.displayEdit = async(req, res, next) => {
     const id= req.params.id;
-    console.log(id);
+    //console.log(id);
     //Lấy dữ liệu 
     //const product = await productModel.findOne({_id: id}).lean();
     const product = await productsService.findOne({_id:id});
-    console.log("product.idmanufacturer: " + product.idmanufacturer);
+    //console.log("product.idmanufacturer: " + product.idmanufacturer);
     const listManufacturer = await manufacturerService.getListManufacturerHaveSelected(product.idmanufacturer);
     res.render('products/editProduct', {product, isDisplay: product.detailImgs && product.detailImgs.length > 0, listManufacturer});
     
@@ -128,12 +128,12 @@ exports.viewProduct = async(req, res, next) => {
     res.render('products/viewProduct', {product});
 };
 
-exports.hienthiPhieuNhapHang = async (req, res, next) => {
+exports.displayGoodsReceivedNote = async (req, res, next) => {
     const products = await productsService.getListProductsAndManufacturer();
     res.render('products/lapPhieuNhapHang', {products, js_file: "../js/custom.js"});
 }
 
-exports.addPhieuNhapHangToDB = async (req, res, next) => {
-    await productsService.addPhieuNhapHang(req, res, next);
+exports.postGoodsReceivedNote = async (req, res, next) => {
+    await goodsReceivedNoteService.addGoodsReceivedNoteToDB(req, res, next);
     res.redirect("/list-products");
 }

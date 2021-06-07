@@ -258,36 +258,68 @@ function setTitleYourAccount() {
     }
 }
 
+function disiableSubmitButton(){
+    $('#submit-button').attr('disabled', true);
+    $(document).on('click','body *',function(){
+        console.log("hi");
+        if($('#size-note').val() > 1){
+            $('#submit-button').attr('disabled', false);
+        } else {
+            $('#submit-button').attr('disabled', true);
+        }
+    });
+}
+
 $(document).ready(function () {
     setTitleYourAccount();
+    //disiableSubmitButton();
 });
+
+const isEmpty = () => {
+    if(Number(document.getElementById("index").innerHTML) == 1){
+        alert("Phiếu nhập hàng trống!");
+    } else {
+        $('#confirmPostModal').modal('show');
+    }
+}
 
 const removeProduct = (productRow) => {
     productRow.remove();
 
-    //Cập nhật stt
     let indexRow = document.getElementsByClassName('index-row');
+    let price = document.getElementsByClassName('price-in-row');//Thành tiền
+    let quantity = document.getElementsByClassName('quantity');//Số lượng
+    let importPrice = document.getElementsByClassName('import-price');//Giá nhập
+    let idProduct = document.getElementsByClassName('id-product');//product id
+
+    //Cập nhật stt va thuộc tính name của các thẻ input
     for (let i = 0; i < indexRow.length; i++) {
         indexRow[i].innerHTML = i + 1;
+        idProduct[i].name = 'idProduct' + (i + 1);
+        importPrice[i].name = 'productPrice' + (i + 1);
+        quantity[i].name = 'quantity' + (i + 1);
+        price[i].name = 'totalPriceOneProduct' + (i + 1);
     }
+
     document.getElementById("index").innerHTML = Number(document.getElementById("index").innerHTML) - 1;
+    document.getElementById("size-note").value = index - 1;
 }
 
 const checkChange = (index) => {
     index = index - 1;
-    let totalPrice = document.getElementById("total-price");
+    let totalPrice = document.getElementById("total-price");//Tổng chi
     let price = document.getElementsByClassName('price-in-row');//Thành tiền
-    let quantity = document.getElementsByClassName('quantity');
-    let importPrice = document.getElementsByClassName('import-price');
+    let quantity = document.getElementsByClassName('quantity');//Số lượng
+    let importPrice = document.getElementsByClassName('import-price');//Giá nhập
     let newTotalPrice = 0;
 
-    price[index].innerHTML = quantity[index].value * importPrice[index].value;
+    price[index].value = quantity[index].value * importPrice[index].value;
 
     for (let i = 0; i < price.length; i++) {
-        newTotalPrice += Number(price[i].innerHTML);
+        newTotalPrice += Number(price[i].value);
     }
 
-    totalPrice.innerHTML = newTotalPrice;
+    totalPrice.value = newTotalPrice;
 }
 
 const checkExist = (name) => {
@@ -308,7 +340,7 @@ const checkExist = (name) => {
     }
 }
 
-const setValueForRow = (name, manufacturer) => {
+const setValueForRow = (idProduct, name, manufacturer) => {
     if (!checkExist(name)) {
         let table = document.getElementById("phieuNhapHangTable");
         let index = Number(document.getElementById("index").innerHTML);
@@ -321,21 +353,25 @@ const setValueForRow = (name, manufacturer) => {
         let cell5 = row.insertCell(4);
         let cell6 = row.insertCell(5);
         let cell7 = row.insertCell(6);
+        let cell8 = row.insertCell(7);//product id
 
         cell1.innerHTML = "<span class='index-row'>" + index + "</span>";
         cell2.innerHTML = name;
         cell3.innerHTML = manufacturer;
-        cell4.innerHTML = "<span><input type='number' class='import-price text-right w-80' min='0' value='0' onchange='checkChange(" + index + ");'/><span>";
-        cell5.innerHTML = "<input type='number' class='quantity text-right w-50' min='1' style='margin:auto; display:block;' value='1'onchange='checkChange(" + index + ");'/>";
-        cell6.innerHTML = "<span class='price-in-row'>0</span>";
-        cell7.innerHTML = "<div class='btn btn-danger' style='margin:auto; display:block;' onclick='removeProduct(" + "this.parentElement.parentElement" + ");'>Xóa</div>";
+        cell4.innerHTML = "<span><input type='number' class='import-price text-right w-80' min='0' value='0' name='productPrice" + index + "' onchange='checkChange(" + index + ");' required/><span>";
+        cell5.innerHTML = "<input type='number' class='quantity text-right w-60' min='1' style='margin:auto; display:block;' value='1' name='quantity" + index + "' onchange='checkChange(" + index + ");' required/>";
+        cell6.innerHTML = "<input class='price-in-row text-right border-0' style='outline: none !important;' name='totalPriceOneProduct" + index + "' value='0' readonly />";
+        cell7.innerHTML = "<div class='btn btn-danger remove-button' style='margin:auto; display:block;' onclick='removeProduct(" + "this.parentElement.parentElement" + ");'>Xóa</div>";
+        cell8.innerHTML = "<input class='id-product' name='idProduct" + index +"' value='" + idProduct + "'/>"
 
         row.setAttribute('class', "align-middle product-row");
         cell1.setAttribute('class', "text-center");
         cell2.setAttribute('class', "product-name");
         cell4.setAttribute('class', "text-center");
         cell6.setAttribute('class', "into-money text-right");
+        cell8.setAttribute('hidden', "true");
 
         document.getElementById("index").innerHTML = index + 1;
+        document.getElementById("size-note").value = index;
     }
 }

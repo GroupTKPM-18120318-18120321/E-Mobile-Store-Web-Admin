@@ -2,11 +2,11 @@ var express = require('express');
 var router = express.Router();
 const productController= require('../controllers/productsController');
 
-router.post('/lap-phieu-nhap-hang', productController.addPhieuNhapHangToDB);
+router.post('/post-goods-received-note', productController.postGoodsReceivedNote);
 
 router.post('/add-new-product-nhap-hang', productController.addProductToDatabaseAndNhapHang);
 
-router.get('/lap-phieu-nhap-hang', productController.hienthiPhieuNhapHang);
+router.get('/lap-phieu-nhap-hang', productController.displayGoodsReceivedNote);
 
 router.get('/add-new-product-nhap-hang', productController.displayAddProductToNhapHang);
 

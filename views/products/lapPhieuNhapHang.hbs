@@ -6,7 +6,8 @@
             <a class="btn btn-primary btn-rounded" href="/list-products/add-new-product"><i
                     class="fas fa-plus-circle"></i> Thêm sản phẩm</a>
         </div> --}}
-        <h6 class="font-italic text-warning">Lưu ý: Thực hiện việc thêm sản phẩm trước khi làm phiếu nhập hàng để tránh mất dữ liệu</h6>
+        <h6 class="font-italic text-danger">Lưu ý: Thực hiện việc thêm sản phẩm trước khi làm phiếu nhập hàng để tránh
+            mất dữ liệu</h6>
         <br>
         <div class="row px-3">
             <div class="mt-10 d-inline">
@@ -18,8 +19,8 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <form action="/list-products/add-new-product-nhap-hang" method="POST" enctype="multipart/form-data"
-                id="add-new-product-form">
+            <form action="/list-products/post-goods-received-note" method="POST" enctype="multipart/form-data"
+                id="post-goods-received-note-form">
                 <table class="table table-hover table-bordered" id="phieuNhapHangTable" width="100%" cellspacing="0">
                     <thead>
                         <tr class="text-center">
@@ -33,8 +34,8 @@
                         </tr>
                     </thead>
 
-                    <tbody>
-
+                    <tbody id="change-row">
+                        <input type="number" name="sizeNote" id="size-note" value=1 hidden />
                         <tr class="align-middle">
                             <td class="align-middle text-center" id="index">
                                 1
@@ -44,32 +45,28 @@
                                 <!--Modal-->
                                 <!-- Button trigger modal -->
                                 <button type="button" class="btn btn-secondary" data-toggle="modal"
-                                    data-target="#exampleModal">
+                                    data-target="#selectProductModal" id="select-product-button">
                                     Chọn sản phẩm
                                 </button>
 
-                                <!-- Modal -->
-                                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
-                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <!--Select Product Modal -->
+                                <div class="modal fade" id="selectProductModal" tabindex="-1" role="dialog"
+                                    aria-labelledby="selectProductModalLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Chọn sản phẩm</h5>
+                                                <h5 class="modal-title" id="selectProductModalLabel">Chọn sản phẩm</h5>
                                                 <button type="button" class="close" data-dismiss="modal"
-                                                    aria-label="Close">
+                                                    aria-label="Close" id="close-modal-button">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-
-
-
                                                 <div class="list-group">
                                                     {{#each products}}
-
                                                     <button type="button"
                                                         class="list-group-item list-group-item-action text-left"
-                                                        onclick="setValueForRow('{{name}}', '{{idmanufacturer.manufacturer}}');">{{name}}</button>
+                                                        onclick="setValueForRow('{{_id}}', '{{name}}', '{{idmanufacturer.manufacturer}}');">{{name}}</button>
                                                     {{/each}}
                                                 </div>
                                             </div>
@@ -92,18 +89,36 @@
                             <td class="align-middle"></td>
                             <td class="align-middle text-center"></td>
                         </tr>
-
-
                     </tbody>
                 </table>
-                <h4 class="text-right">Tổng chi: <span id="total-price">0</span>₫</h4>
-                <div class="form-group mt-3">
-                    <button type="submit" class="btn btn-primary mr-2">Lập</button>
-                    <a class="btn btn-danger" href="/list-products">Hủy</a>
+                <div class="text-right"><span>Tổng chi: </span><input name="totalPrice" class="d-inline text-right"
+                        style='outline: none !important;' id="total-price" value='0' readonly /><span>₫</span></div>
+                <div class="form-group mt-3"></div>
+
+                <!--Confirm Post Modal -->
+                <div class="modal fade" id="confirmPostModal" tabindex="-1" role="dialog"
+                    aria-labelledby="confirmPostModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="confirmPostModalLabel">Xác nhận lập phiếu nhập hàng</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-success">Đồng ý</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </form>
+
+                <button type="button" id="submit-button" class="btn btn-primary mr-2" onclick="isEmpty();">Lập phiếu</button>
+                <a class="btn btn-danger" href="/list-products">Hủy</a>
         </div>
-        
+        </form>
     </div>
 
 </div>
