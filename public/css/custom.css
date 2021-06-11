@@ -28,3 +28,9 @@
 .table-manufacturers tr td.stt::before, .table-order-detail tr td.stt::before {
     content: counter(rowNumber);
 }
+
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}

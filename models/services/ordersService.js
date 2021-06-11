@@ -1,124 +1,137 @@
-const mongoose= require('mongoose');
+const mongoose = require('mongoose');
 
 const ordersModel = require('../mongoose/orderModel');
 
-exports.getListOrders = async(req) => {
+exports.getListOrders = async (req) => {
 
-	const page=+req.query.page || 1;
-    const limit =10;
-    const offset =(page -1)*10;
-    const orders = await ordersModel.orderModel.find({})
- 	.populate({ path: "orderStatus" }).skip(offset).limit(limit)
- 	.exec().then(async (docs) => {
-   		const options = {
-			path: "idCustomer",
-			model: "Account",
-   		}
+	const page = +req.query.page || 1;
+	const limit = 10;
+	const offset = (page - 1) * 10;
+	const orders = await ordersModel.orderModel.find({})
+		.populate({ path: "orderStatus" }).skip(offset).limit(limit)
+		.exec().then(async (docs) => {
+			const options = {
+				path: "idCustomer",
+				model: "Account",
+			}
 
-		const result = await ordersModel.orderModel.populate(docs, options);
-		//console.log(result.idCustomer.name);
+			const result = await ordersModel.orderModel.populate(docs, options);
+			//console.log(result.idCustomer.name);
 
-   		return result;
-	});
-	  
+			return result;
+		});
+
 	return orders;
 }
 
-exports.countListOrder = async ()=>{
+exports.countListOrder = async () => {
 	return await ordersModel.orderModel.countDocuments();
 }
 
 exports.getOrderDetail = async (req, res, next) => {
 	const id = req.params.id;
-	const page=+req.query.page || 1;
-    const limit =10;
-    const offset =(page -1)*10;
+	const page = +req.query.page || 1;
+	const limit = 10;
+	const offset = (page - 1) * 10;
 
-	const order = await ordersModel.orderModel.findOne({_id: id})
-	.populate({ path: "orderStatus" })
-	.exec().then(async (docs) => {
-		  const options = {
-		   path: "idCustomer",
-		   model: "Account",
-		}
+	const order = await ordersModel.orderModel.findOne({ _id: id })
+		.populate({ path: "orderStatus" })
+		.exec().then(async (docs) => {
+			const options = {
+				path: "idCustomer",
+				model: "Account",
+			}
 
-	   	const result = await ordersModel.orderModel.populate(docs, options);
-	   	//console.log("customer: " + result);
-		return result;
-	});
-	   
-	const details = await ordersModel.orderDetailModel.find({idOrder: id})
-	.populate({ path: "idOrder" }).skip(offset).limit(limit)
-	//.populate({path: "idProduct" })
-	.exec().then(async (docs) => {
-		const options = {
-		 	path: "idProduct",
-		 	model: "Product",
-		}
+			const result = await ordersModel.orderModel.populate(docs, options);
+			//console.log("customer: " + result);
+			return result;
+		});
 
-		const result = await ordersModel.orderDetailModel.populate(docs, options);
-		//console.log("detail: " + result);
-	  	return result;
-	});
+	const details = await ordersModel.orderDetailModel.find({ idOrder: id })
+		.populate({ path: "idOrder" }).skip(offset).limit(limit)
+		//.populate({path: "idProduct" })
+		.exec().then(async (docs) => {
+			const options = {
+				path: "idProduct",
+				model: "Product",
+			}
 
-	let orderDetail = {order, details};
+			const result = await ordersModel.orderDetailModel.populate(docs, options);
+			//console.log("detail: " + result);
+			return result;
+		});
+
+	let orderDetail = { order, details };
 
 	//console.log(orderDetail);
 	return orderDetail;
 }
 
-exports.countDetailOrder = async (query)=>{
+exports.countDetailOrder = async (query) => {
 	//const id = req.params.id;
 	return await ordersModel.orderDetailModel.countDocuments(query);
 }
 
-exports.caculateRevenue= async(filter,time)=>{
+exports.caculateRevenue = async (filter, time) => {
 	const listOrder = await ordersModel.orderModel.find();
-	let revenue=0;
+	let revenue = 0;
 	let now = new Date();
-	
-	for(let i of listOrder){
-		if(filter == "year" && i.orderDate.getFullYear()==time){
-			revenue+=i.total;
+
+	for (let i of listOrder) {
+		if (filter == "year" && i.orderDate.getFullYear() == time) {
+			revenue += i.total;
 		}
-		else if(i.orderDate.getFullYear()==now.getFullYear()){
-			if(filter=="month" && i.orderDate.getMonth()==time)
-				revenue+=i.total;
-			else if(filter=="quarter" && Math.floor(i.orderDate.getMonth()/3)==time)
-				revenue+=i.total;
-			else if(i.orderDate.getMonth()==now.getMonth()){
-				if(filter=="day" && i.orderDate.getDate()==now.getDate()){
-					revenue+=i.total;
+		else if (i.orderDate.getFullYear() == now.getFullYear()) {
+			if (filter == "month" && i.orderDate.getMonth() == time)
+				revenue += i.total;
+			else if (filter == "quarter" && Math.floor(i.orderDate.getMonth() / 3) == time)
+				revenue += i.total;
+			else if (i.orderDate.getMonth() == now.getMonth()) {
+				if (filter == "day" && i.orderDate.getDate() == now.getDate()) {
+					revenue += i.total;
 				}
 			}
-			
+
 		}
 	}
 
-	return revenue;
+	return Number(revenue);
 }
 
-const topProduct = async(filter,time) =>{
+const topProduct = async (filter, time) => {
 	const listOrder = await ordersModel.orderModel.find();
-	const order=[];
+	const order = [];
 	let now = new Date();
-	for(let i of listOrder){
-		if(filter == "year" && i.orderDate.getFullYear()==time){
+	for (let i of listOrder) {
+		if (filter == "year" && i.orderDate.getFullYear() == time) {
 			order.push(i);
 		}
-		else if(i.orderDate.getFullYear()==now.getFullYear()){
-			if(filter=="month" && i.orderDate.getMonth()==time)
+		else if (i.orderDate.getFullYear() == now.getFullYear()) {
+			if (filter == "month" && i.orderDate.getMonth() == time)
 				order.push(i);
-			else if(filter=="quarter" && Math.floor(i.orderDate.getMonth()/3)==time)
+			else if (filter == "quarter" && Math.floor(i.orderDate.getMonth() / 3) == time)
 				order.push(i);
-			else if(i.orderDate.getMonth()==now.getMonth()){
-				if(filter=="day" && i.orderDate.getDate()==now.getDate()){
+			else if (i.orderDate.getMonth() == now.getMonth()) {
+				if (filter == "day" && i.orderDate.getDate() == now.getDate()) {
 					order.push(i);
 				}
 			}
-			
 		}
 	}
+}
 
-	
+//date: Date
+exports.countOrderInDate = async (date) => {
+	const listOrder = await ordersModel.orderModel.find();
+	let c = 0;
+	let r = 0;
+
+	for (let order of listOrder) {
+		if (order.orderDate.getFullYear() === date.getFullYear() && order.orderDate.getMonth() === date.getMonth() && order.orderDate.getDate() === date.getDate()) {
+			c += 1;
+			r += order.total;
+		}
+	}
+	// {So luong don hang trong ngay, Doanh thu trong ngay}
+	return { count: c, revenue: r }; 
 }

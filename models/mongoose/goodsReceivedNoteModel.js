@@ -11,50 +11,6 @@ const goodsReceivedNoteSchema = mongoose.Schema({
     toJSON: { virtuals: true }
 });
 
-//Format
-const formatConcurency = (concurency)=>{
-    let result="";
-    const arr=[];
-    let tmp;
-    do{
-        tmp=concurency%1000;
-        arr.unshift(tmp==0?"000":tmp);
-        concurency=Math.floor(concurency/1000);
-    }while(concurency>0);
-
-    for(let i=0;i<arr.length;i++){
-        result+=arr[i];
-        result += i==arr.length-1 ? "" :".";
-    }   
-
-    return result;
-}
-
-// orderSchema.virtual('ftotal').get(function() {
-//     return formatConcurency(this.total); 
-// });
-
-// orderSchema.virtual('orderTime').get(function() {
-//     const time= new Date(this.orderDate);
-//     const d = time.getDate();
-//     const m =  time.getMonth() +1;
-//     const y =  time.getFullYear(); 
-//     return d + "-" + m + "-" + y;
-// });
-
-// orderSchema.virtual('deliveryTime').get(function() {
-//     const time= new Date(this.orderDate);
-//     const d = time.getDate();
-//     const m =  time.getMonth() +1;
-//     const y =  time.getFullYear(); 
-//     return d + "-" + m + "-" + y;
-// });
-
-// orderSchema.virtual('address').get(function() {
-//         return `${this.street}, ${this.subDistrict}, ${this.district}, ${this.city}`; 
-// });
-// //
-
 const listGoodsReceivedNoteSchema = mongoose.Schema({
 
 });
@@ -67,8 +23,54 @@ const goodsReceivedNoteDetailSchema = mongoose.Schema({
     totalPriceOneProduct: {type: Number, required: true},
 });
 
-// orderDetailSchema.virtual('ftotal').get(function() {
-//     return formatConcurency(this.total); 
+//Format
+const formatConcurency = (concurency)=>{
+    let result="";
+    const arr=[];
+    let tmp;
+    do{
+        if (tmp == 0) {
+            arr.unshift("000");
+        } else if (tmp < 10) {
+            arr.unshift("00" + tmp);
+        } else if (tmp < 100) {
+            arr.unshift("0" + tmp);
+        } else {
+            arr.unshift(tmp);
+        }
+        //arr.unshift(tmp==0?"000":tmp);
+        concurency = Math.floor(concurency / 1000);
+    } while (concurency >= 1000);
+    
+    arr.unshift(concurency);
+
+    for(let i=0;i<arr.length;i++){
+        result+=arr[i];
+        result += i==arr.length-1 ? "" :".";
+    }   
+
+    return result;
+}
+
+goodsReceivedNoteSchema.virtual('ftotalPrice').get(function() {
+    return formatConcurency(this.totalPrice); 
+});
+
+goodsReceivedNoteDetailSchema.virtual('ftotalPriceOneProduct').get(function() {
+    return formatConcurency(this.totalPriceOneProduct); 
+});
+
+goodsReceivedNoteDetailSchema.virtual('fproductPrice').get(function() {
+    return formatConcurency(this.productPrice); 
+});
+
+
+// orderSchema.virtual('deliveryTime').get(function() {
+//     const time= new Date(this.orderDate);
+//     const d = time.getDate();
+//     const m =  time.getMonth() +1;
+//     const y =  time.getFullYear(); 
+//     return d + "-" + m + "-" + y;
 // });
 
 //orderSchema.plugin(mongoosePaginate);

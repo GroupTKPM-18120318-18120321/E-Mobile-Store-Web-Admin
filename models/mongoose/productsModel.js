@@ -34,9 +34,20 @@ const formatConcurency = (concurency)=>{
     let tmp;
     do{
         tmp=concurency%1000;
-        arr.unshift(tmp==0?"000":tmp);
-        concurency=Math.floor(concurency/1000);
-    }while(concurency>0);
+        if (tmp == 0) {
+            arr.unshift("000");
+        } else if (tmp < 10) {
+            arr.unshift("00" + tmp);
+        } else if (tmp < 100) {
+            arr.unshift("0" + tmp);
+        } else {
+            arr.unshift(tmp);
+        }
+        //arr.unshift(tmp==0?"000":tmp);
+        concurency = Math.floor(concurency / 1000);
+    } while (concurency >= 1000);
+    
+    arr.unshift(concurency);
 
     for(let i=0;i<arr.length;i++){
         result+=arr[i];
