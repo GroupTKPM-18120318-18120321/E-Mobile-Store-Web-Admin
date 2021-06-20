@@ -273,6 +273,7 @@ function disiableSubmitButton(){
 $(document).ready(function () {
     setTitleYourAccount();
     //disiableSubmitButton();
+    closeEditInterface();
 });
 
 const isEmpty = () => {
@@ -374,4 +375,20 @@ const setValueForRow = (idProduct, name, manufacturer) => {
         document.getElementById("index").innerHTML = index + 1;
         document.getElementById("size-note").value = index;
     }
+}
+
+const openEditInterface = () => {
+    document.getElementById("edit-table").removeAttribute("hidden");
+}
+
+const closeEditInterface = () => {
+    let id = document.getElementById("edit-table");
+    if (id.getAttribute("hidden") == undefined){
+        id.setAttribute("hidden", "true");
+    }
+   
+}
+
+const enableUpdateButton = () => {
+    Document.g
 }

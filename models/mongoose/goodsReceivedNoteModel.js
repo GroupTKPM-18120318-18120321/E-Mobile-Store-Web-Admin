@@ -29,6 +29,7 @@ const formatConcurency = (concurency)=>{
     const arr=[];
     let tmp;
     do{
+        tmp = concurency % 1000;
         if (tmp == 0) {
             arr.unshift("000");
         } else if (tmp < 10) {

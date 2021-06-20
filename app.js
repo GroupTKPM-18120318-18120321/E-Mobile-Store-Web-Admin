@@ -21,6 +21,7 @@ const ordersRouter = require('./routes/orders');
 const manufacturersRouter = require('./routes/manufacturers');
 const authRouter = require('./routes/auth');
 const mailerRouter = require('./routes/mailer');
+const regulationsRouter = require('./routes/regulations');
 
 const app = express();
 
@@ -96,6 +97,7 @@ app.use('/list-products', productsRouter);
 app.use('/my-account', adAccountRouter);
 app.use('/list-orders', ordersRouter);
 app.use('/list-manufacturers', manufacturersRouter);
+app.use('/list-regulations', regulationsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
