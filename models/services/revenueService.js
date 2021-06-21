@@ -1,17 +1,49 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
 
-const goodsReceivedNoteModel = require('../mongoose/goodsReceivedNoteModel');
-const productsService = require('../services/productsService');
+const goodsReceivedNoteService = require ('./goodsReceivedNoteService');
 const revenueModel = require('../mongoose/revenueModel');
 const ordersModel = require('../mongoose/orderModel');
-const ordersService = require('../services/ordersService');
+const orderService = require('./ordersService');
+
+const formatCurrency = (currency) => {
+	let result = "";
+	const arr = [];
+	let tmp;
+	if (currency < 1000) {
+		result = String(currency);
+	} else {
+		do {
+			tmp = currency % 1000;
+			if (tmp == 0) {
+				arr.unshift("000");
+			} else if (tmp < 10) {
+				arr.unshift("00" + tmp);
+			} else if (tmp < 100) {
+				arr.unshift("0" + tmp);
+			} else {
+				arr.unshift(tmp);
+			}
+			//arr.unshift(tmp==0?"000":tmp);
+			currency = Math.floor(currency / 1000);
+		} while (currency >= 1000);
+
+		arr.unshift(currency);
+
+		for (let i = 0; i < arr.length; i++) {
+			result += arr[i];
+			result += i == arr.length - 1 ? "" : ".";
+		}
+	}
+
+	return result;
+}
 
 //Neu la ngay 1 thi moi them
 exports.addMonthRevenueReport = async (month, year) => {
 	const report = {
 		idRevenueReport: mongoose.Types.ObjectId('60c164f8fa36a8c8d5183e23'),
-		date: String(month) + String(year),
+		date: String(month) + "/" + String(year),
 		total: 0
 	};
 
@@ -20,8 +52,7 @@ exports.addMonthRevenueReport = async (month, year) => {
 }
 
 //month: String
-//yaer: String
-
+//year: String
 exports.updateMonthRevenueTotal = async (month, year) => {
 	const nowDate = new Date();
 	const startDate = new Date(year, month, 1);
@@ -53,14 +84,27 @@ exports.updateDateRevenueWithNewOrder = async (date, order) => {
 
 }
 
-exports.updateDateRevenueWithNewOrderGoodsReceivedNote = async (date, goodsReceivedNote) => {
+exports.updateDateRevenueWithNewOrderGoodsReceivedNote = async (date, totalPrice) => {
+	const startDate = new Date(date.getFullYear() + "-" + String(date.getMonth() + 1) + "-" + date.getDate());
+	const endDate = new Date(date.getFullYear() + "-" + String(date.getMonth() + 1) + "-" + String(date.getDate() + 1));
+	const query = {
+		date: {
+			$gte: startDate,
+			$lt: endDate
+		}
+	};
 
+	const dateRevenue = await revenueModel.dateRevenueDetail.findOne(query);
+	await revenueModel.dateRevenueDetail.findOneAndUpdate({ _id: dateRevenue._id }, {
+		totalCost: dateRevenue.totalCost + totalPrice
+	});
+
+	console.log("Cap nhat doanh thu ngay voi phieu nhap hang thanh cong");
 }
 
 exports.getListActiveMonths = async () => {
 	const nowDate = new Date();
 	const startDate = new Date('2021-01-01');
-
 	let listActiveMonths = [];
 	let i;
 
@@ -110,11 +154,29 @@ exports.calcMonthRevenue = async (month, year, listOrders) => {
 	return Number(revenue);
 }
 
+//Tạo báo cáo doanh thu ngày
 // month, year: Number
 // month: [1,12]
-exports.getListDateRevenue = async (month, year, listOrders) => {
-	let result = [];
-	//const startDate = new Date(year + "-" + month + "-1");
+exports.createListDayRevenue = async (month, year, monthRevenueReportID) => {
+	const endDate = new Date(year, month, 0);
+	const end = endDate.getDate();
+	let date;
+
+	for (let i = 1; i <= end; i++) {
+		date = new Date(year, month - 1, i);
+		const data = {
+			idMonthRevenue: monthRevenueReportID,
+			date: date
+		}
+		const revenue = await revenueModel.dateRevenueDetail(data);
+		await revenue.save();
+	}
+	console.log("Them ngay thanh cong");
+}
+
+// month, year: Number
+// month: [1,12]
+exports.getListDateRevenue = async (month, year) => {
 	let endDate;
 	const nowDate = new Date();
 
@@ -125,19 +187,131 @@ exports.getListDateRevenue = async (month, year, listOrders) => {
 		endDate = new Date(year, month, 0);
 	}
 
+	const query = month + "/" + year;
+	let monthRevenue = await revenueModel.monthRevenueModel.findOne({ date: query });
+
+	//Khi chưa có đơn hàng nào trong tháng => null
+	if (monthRevenue == null) {
+		await this.addMonthRevenueReport(month, year);
+		monthRevenue = await revenueModel.monthRevenueModel.findOne({ date: query });
+		await this.createListDayRevenue(month, year, monthRevenue._id);
+	}
+
+	const data = await revenueModel.dateRevenueDetail.find({ idMonthRevenue: monthRevenue._id });
+
+	//Tìm tháng/năm. Lấy ngày làm index.
+	//const listGoodsReceivedNoteInMonth = await goodsReceivedNoteService.getGoodsReceivedNoteInMonth(month, year);
+
 	// Duyet cac ngay
 	let listDatesOfMonths = [];
-
-	for(let i = 1; i <= endDate.getDate(); i++){
-		const date = new Date(year, month - 1, i);
-		const tmp = await ordersService.countOrderInDate(date);
-		listDatesOfMonths.push({ 
-			date: date.getDate() + "/" + (date.getMonth() + 1), 
-			count: tmp.count, 
-			revenue: tmp.revenue
+	const end = endDate.getDate();
+	for (let i = 1; i <= end; i++) {
+		//const date = new Date(year, month - 1, i);
+		//const tmp = await ordersService.countOrderInDate(date);
+		const formatDate = data[i - 1].date.getDate() + "/" + (data[i - 1].date.getMonth() + 1) + "/" + data[i - 1].date.getFullYear();
+		listDatesOfMonths.push({
+			index: i,
+			date: formatDate,
+			numberOfOrders: data[i - 1].numberOfOrders,
+			dayTotalRevenue: data[i - 1].dayTotalRevenue,
+			//totalPrice: listGoodsReceivedNoteInMonth[i - 1].totalPrice,
+			//total: data[i - 1].dayTotalRevenue - listGoodsReceivedNoteInMonth[i - 1].totalPrice
+			totalCost: data[i - 1].totalCost,
+			total: data[i - 1].dayTotalRevenue - data[i - 1].totalCost
 		});
 	}
 
-	console.log(listDatesOfMonths);
+	//console.log(listDatesOfMonths);
+	return listDatesOfMonths;
+}
+
+exports.displayChartAndMonthRevenue = async (req) => {
+	let filter = req.query.filter;
+	let data = [];
+
+	//console.log(req.query.filter);
+
+	let monthRevenue;
+	let month;//thang truy van
+	let year;//nam truy van
+	const list = await this.getListActiveMonths();
+
+	if (filter == undefined) {
+		filter = list[list.length - 1];// Chọn tháng hiện tại để hiển thị doanh thu
+	}
+
+	const dateObj = String(filter).split("/");
+	month = Number(dateObj[0]);// month: [1,12]
+	year = Number(dateObj[1]);
+	const listOrders = await ordersModel.orderModel.find();
+	monthRevenue = await this.calcMonthRevenue(month, year, listOrders);
+	let listDateRevenue = await this.getListDateRevenue(month, year);
+
+	//console.log(listDateRevenue);
+	const now = new Date();
+
+	if (month === now.getUTCMonth()) {
+		todayRevenue = orderService.countOrderInDate(now);
+	}
+
+	const yearSales = await orderService.caculateRevenue("year", now.getFullYear());
+	const monthSales = await orderService.caculateRevenue("month", now.getMonth());
+	const daySales = await orderService.caculateRevenue("day", now.getDate());
+	const quarterSales = await orderService.caculateRevenue("quarter", Math.floor(now.getMonth() / 3));
+
+
+	const datamongoose = {};
+
+	if (filter === "year") {
+		//Tính doanh số trong 5 năm trở lại đây
+		for (let i = 0; i < 5; i++) {
+			datamongoose[now.getFullYear() - i] = await orderService.caculateRevenue("year", now.getFullYear() - i);
+		}
+	}
+	else if (filter === "month") {
+		//Tính doanh số của 12 tháng trong năm
+		for (let i = 0; i < 12; i++) {
+			datamongoose[i + 1] = await orderService.caculateRevenue("month", i)
+		}
+	}
+	else if (filter === "quarter") {
+		//Tính doanh số của 4 quý trong năm
+		for (let i = 0; i < 4; i++) {
+			datamongoose[i + 1] = await orderService.caculateRevenue("quarter", i)
+		}
+	}
+	else {
+		for (let i = 0; i < 12; i++) {
+			datamongoose[i + 1] = await orderService.caculateRevenue("month", i)
+		}
+	}
+
+	//const dateRevenue = await this.getListDateRevenue(month, year);
+
+	for (let i = 0; i < listDateRevenue.length; i++) {
+		data.push({ index: i, label: listDateRevenue[i].index, num: listDateRevenue[i].total });
+	}
+	//console.log("Data: \n" + data[0]);
+
+	//Định dạng lại cách hiển thị số tiền
+	for (let i = 0; i < listDateRevenue.length; i++) {
+		listDateRevenue[i].dayTotalRevenue = formatCurrency(listDateRevenue[i].dayTotalRevenue);
+		listDateRevenue[i].totalCost = formatCurrency(listDateRevenue[i].totalCost);
+		listDateRevenue[i].total = formatCurrency(listDateRevenue[i].total);
+	}
+
+	const result = {
+		data,
+		numData: data.length,
+		daySales: formatCurrency(daySales),
+		monthSales: formatCurrency(monthSales),
+		quarterSales: formatCurrency(quarterSales),
+		yearSales: formatCurrency(yearSales),
+		listActiveMonths: list,
+		revenue: monthRevenue,
+		chartTitle: filter,
+		dateRevenue: listDateRevenue
+	}
+
 	return result;
 }

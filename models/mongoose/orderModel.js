@@ -22,37 +22,41 @@ const orderSchema = mongoose.Schema({
 });
 
 //Format
-const formatConcurency = (concurency) => {
+const formatCurrency = (currency) => {
     let result = "";
     const arr = [];
     let tmp;
-    do {
-        tmp = concurency % 1000;
-        if (tmp == 0) {
-            arr.unshift("000");
-        } else if (tmp < 10) {
-            arr.unshift("00" + tmp);
-        } else if (tmp < 100) {
-            arr.unshift("0" + tmp);
-        } else {
-            arr.unshift(tmp);
-        }
-        //arr.unshift(tmp==0?"000":tmp);
-        concurency = Math.floor(concurency / 1000);
-    } while (concurency >= 1000);
-    
-    arr.unshift(concurency);
-
-    for (let i = 0; i < arr.length; i++) {
-        result += arr[i];
-        result += i == arr.length - 1 ? "" : ".";
-    }
+    if (currency < 1000) {
+        result = String(currency);
+    } else {
+		do {
+			tmp = currency % 1000;
+			if (tmp == 0) {
+				arr.unshift("000");
+			} else if (tmp < 10) {
+				arr.unshift("00" + tmp);
+			} else if (tmp < 100) {
+				arr.unshift("0" + tmp);
+			} else {
+				arr.unshift(tmp);
+			}
+            
+			currency = Math.floor(currency / 1000);
+		} while (currency >= 1000);
+	
+		arr.unshift(currency);
+	
+		for (let i = 0; i < arr.length; i++) {
+			result += arr[i];
+			result += i == arr.length - 1 ? "" : ".";
+		}
+	}
 
     return result;
 }
 
 orderSchema.virtual('ftotal').get(function () {
-    return formatConcurency(this.total);
+    return formatCurrency(this.total);
 });
 
 
@@ -91,7 +95,7 @@ const orderDetailSchema = mongoose.Schema({
 });
 
 orderDetailSchema.virtual('ftotal').get(function () {
-    return formatConcurency(this.total);
+    return formatCurrency(this.total);
 });
 
 orderSchema.plugin(mongoosePaginate);

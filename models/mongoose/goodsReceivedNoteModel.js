@@ -24,12 +24,12 @@ const goodsReceivedNoteDetailSchema = mongoose.Schema({
 });
 
 //Format
-const formatConcurency = (concurency)=>{
+const formatCurrency = (currency)=>{
     let result="";
     const arr=[];
     let tmp;
     do{
-        tmp = concurency % 1000;
+        tmp = currency % 1000;
         if (tmp == 0) {
             arr.unshift("000");
         } else if (tmp < 10) {
@@ -40,10 +40,10 @@ const formatConcurency = (concurency)=>{
             arr.unshift(tmp);
         }
         //arr.unshift(tmp==0?"000":tmp);
-        concurency = Math.floor(concurency / 1000);
-    } while (concurency >= 1000);
+        currency = Math.floor(currency / 1000);
+    } while (currency >= 1000);
     
-    arr.unshift(concurency);
+    arr.unshift(currency);
 
     for(let i=0;i<arr.length;i++){
         result+=arr[i];
@@ -54,15 +54,15 @@ const formatConcurency = (concurency)=>{
 }
 
 goodsReceivedNoteSchema.virtual('ftotalPrice').get(function() {
-    return formatConcurency(this.totalPrice); 
+    return formatCurrency(this.totalPrice); 
 });
 
 goodsReceivedNoteDetailSchema.virtual('ftotalPriceOneProduct').get(function() {
-    return formatConcurency(this.totalPriceOneProduct); 
+    return formatCurrency(this.totalPriceOneProduct); 
 });
 
 goodsReceivedNoteDetailSchema.virtual('fproductPrice').get(function() {
-    return formatConcurency(this.productPrice); 
+    return formatCurrency(this.productPrice); 
 });
 
 

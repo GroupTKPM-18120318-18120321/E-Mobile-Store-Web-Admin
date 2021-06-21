@@ -66,7 +66,7 @@
                                                     {{#each products}}
                                                     <button type="button"
                                                         class="list-group-item list-group-item-action text-left"
-                                                        onclick="setValueForRow('{{_id}}', '{{name}}', '{{idmanufacturer.manufacturer}}');">{{name}}</button>
+                                                        onclick="setValueForRow('{{_id}}', '{{name}}', '{{idmanufacturer.manufacturer}}', {{baseprice}});">{{name}}</button>
                                                     {{/each}}
                                                 </div>
                                             </div>
@@ -91,7 +91,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <div class="text-right"><span>Tổng chi: </span><input name="totalPrice" class="d-inline text-right"
+                <div class="text-right"><span>Tổng chi: </span><input name="totalPrice" type="number" class="d-inline text-right border-0 h4"
                         style='outline: none !important;' id="total-price" value='0' readonly /><span>₫</span></div>
                 <div class="form-group mt-3"></div>
 

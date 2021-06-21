@@ -126,6 +126,9 @@ exports.countOrderInDate = async (date) => {
 	let c = 0;
 	let r = 0;
 
+
+	
+
 	for (let order of listOrder) {
 		if (order.orderDate.getFullYear() === date.getFullYear() && order.orderDate.getMonth() === date.getMonth() && order.orderDate.getDate() === date.getDate()) {
 			c += 1;

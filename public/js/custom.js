@@ -341,7 +341,7 @@ const checkExist = (name) => {
     }
 }
 
-const setValueForRow = (idProduct, name, manufacturer) => {
+const setValueForRow = (idProduct, name, manufacturer, baseprice) => {
     if (!checkExist(name)) {
         let table = document.getElementById("phieuNhapHangTable");
         let index = Number(document.getElementById("index").innerHTML);
@@ -359,9 +359,9 @@ const setValueForRow = (idProduct, name, manufacturer) => {
         cell1.innerHTML = "<span class='index-row'>" + index + "</span>";
         cell2.innerHTML = name;
         cell3.innerHTML = manufacturer;
-        cell4.innerHTML = "<span><input type='number' class='import-price text-right w-80' min='0' value='0' name='productPrice" + index + "' onchange='checkChange(" + index + ");' required/><span>";
-        cell5.innerHTML = "<input type='number' class='quantity text-right w-60' min='1' style='margin:auto; display:block;' value='1' name='quantity" + index + "' onchange='checkChange(" + index + ");' required/>";
-        cell6.innerHTML = "<input class='price-in-row text-right border-0' style='outline: none !important;' name='totalPriceOneProduct" + index + "' value='0' readonly />";
+        cell4.innerHTML = "<span><input type='number' class='import-price text-right w- form-control' min='0' value='" + baseprice + "' name='productPrice" + index + "' onchange='checkChange(" + index + ");' required/><span>";
+        cell5.innerHTML = "<input type='number' class='quantity text-right w-60 form-control' min='1' style='margin:auto; display:block;' value='1' name='quantity" + index + "' onchange='checkChange(" + index + ");' required/>";
+        cell6.innerHTML = "<input class='price-in-row text-right border-0' style='outline: none !important;' name='totalPriceOneProduct" + index + "' value='" + baseprice + "' readonly />";
         cell7.innerHTML = "<div class='btn btn-danger remove-button' style='margin:auto; display:block;' onclick='removeProduct(" + "this.parentElement.parentElement" + ");'>Xóa</div>";
         cell8.innerHTML = "<input class='id-product' name='idProduct" + index +"' value='" + idProduct + "'/>"
 
@@ -374,6 +374,8 @@ const setValueForRow = (idProduct, name, manufacturer) => {
 
         document.getElementById("index").innerHTML = index + 1;
         document.getElementById("size-note").value = index;
+        let totalPrice = document.getElementById("total-price");
+        totalPrice.value = Number(totalPrice.value) + Number(baseprice);
     }
 }
 
@@ -383,7 +385,7 @@ const openEditInterface = () => {
 
 const closeEditInterface = () => {
     let id = document.getElementById("edit-table");
-    if (id.getAttribute("hidden") == undefined){
+    if (id != null && id.getAttribute("hidden") == undefined){
         id.setAttribute("hidden", "true");
     }
    

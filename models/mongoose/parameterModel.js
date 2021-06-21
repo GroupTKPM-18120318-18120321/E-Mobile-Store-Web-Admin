@@ -16,15 +16,15 @@ const parameterTableSchema = mongoose.Schema({
 
 });
 
-const formatConcurency = (concurency) => {
+const formatCurrency = (currency) => {
     let result = "";
     const arr = [];
     let tmp;
-    if (concurency < 1000) {
-        result = String(concurency);
+    if (currency < 1000) {
+        result = String(currency);
     } else {
         do {
-            tmp = concurency % 1000;
+            tmp = currency % 1000;
             if (tmp == 0) {
                 arr.unshift("000");
             } else if (tmp < 10) {
@@ -35,10 +35,10 @@ const formatConcurency = (concurency) => {
                 arr.unshift(tmp);
             }
             //arr.unshift(tmp==0?"000":tmp);
-            concurency = Math.floor(concurency / 1000);
-        } while (concurency >= 1000);
+            currency = Math.floor(currency / 1000);
+        } while (currency >= 1000);
 
-        arr.unshift(concurency);
+        arr.unshift(currency);
 
         for (let i = 0; i < arr.length; i++) {
             result += arr[i];
@@ -50,7 +50,7 @@ const formatConcurency = (concurency) => {
 }
 
 parameterSchema.virtual('fvalue').get(function () {
-    return formatConcurency(this.value);
+    return formatCurrency(this.value);
 });
 
 const parameter = mongoose.model('Parameter', parameterSchema, "Parameter");

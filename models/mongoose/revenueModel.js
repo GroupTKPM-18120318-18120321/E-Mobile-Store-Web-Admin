@@ -17,51 +17,55 @@ const revenueReportSchema = mongoose.Schema({
 const dateRevenueDetailSchema = mongoose.Schema({
     idMonthRevenue: {type: mongoose.Schema.Types.ObjectId , require: true, ref: 'MonthRevenue'},
     date: {type: Date, require: true},//Ngày trong tháng dùng để tìm các phiếu nhập hàng và các đơn hàng cùng ngày
-    numberOfOrders: {type: Number, required: true},//Tong so don hang duoc dat trong ngay
+    numberOfOrders: {type: Number, required: true, default: 0},//Tong so don hang duoc dat trong ngay
     dayTotalRevenue: {type: Number, required: true, default: 0},//So tiên thu duoc tu cac don hang
     totalCost: {type: Number, required: true, default: 0},//So tien chi cho hoa don nhap hang trong ngay
 });
 
 //Format
-const formatConcurency = (concurency)=>{
+const formatCurrency = (currency)=>{
     let result="";
     const arr=[];
     let tmp;
-    do{
-        tmp = concurency % 1000;
-        if (tmp == 0) {
-            arr.unshift("000");
-        } else if (tmp < 10) {
-            arr.unshift("00" + tmp);
-        } else if (tmp < 100) {
-            arr.unshift("0" + tmp);
-        } else {
-            arr.unshift(tmp);
-        }
-        //arr.unshift(tmp==0?"000":tmp);
-        concurency = Math.floor(concurency / 1000);
-    } while (concurency >= 1000);
-    
-    arr.unshift(concurency);
+    if (currency < 1000) {
+        result = String(currency);
+    } else {
+		do {
+			tmp = currency % 1000;
+			if (tmp == 0) {
+				arr.unshift("000");
+			} else if (tmp < 10) {
+				arr.unshift("00" + tmp);
+			} else if (tmp < 100) {
+				arr.unshift("0" + tmp);
+			} else {
+				arr.unshift(tmp);
+			}
 
-    for(let i=0;i<arr.length;i++){
-        result+=arr[i];
-        result += i==arr.length-1 ? "" :".";
-    }   
+			currency = Math.floor(currency / 1000);
+		} while (currency >= 1000);
+	
+		arr.unshift(currency);
+	
+		for (let i = 0; i < arr.length; i++) {
+			result += arr[i];
+			result += i == arr.length - 1 ? "" : ".";
+		}
+	} 
 
     return result;
 }
 
 monthRevenueSchema.virtual('ftotalMonthRevenue').get(function() {
-    return formatConcurency(this.total); 
+    return formatCurrency(this.total); 
 });
 
 dateRevenueDetailSchema.virtual('ftotalCost').get(function() {
-    return formatConcurency(this.totalCost); 
+    return formatCurrency(this.totalCost); 
 });
 
 dateRevenueDetailSchema.virtual('fdayTotalRevenue').get(function() {
-    return formatConcurency(this.dayTotalRevenue); 
+    return formatCurrency(this.dayTotalRevenue); 
 });
 
 monthRevenueSchema.virtual('fdateOfMonth').get(function() {

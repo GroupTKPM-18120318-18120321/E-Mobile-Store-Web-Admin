@@ -334,39 +334,23 @@
                 <thead>
                     <tr class="text-center">
                         <th width="10%">STT</th>
-                        <th width="30%">Ngày</th>
-                        <th width="25%">Số đơn hàng</th>
-                        <th width="30%">Doanh thu</th>
+                        <th width="15%">Ngày</th>
+                        <th width="15%">Số đơn hàng</th>
+                        <th width="20%">Tổng thu từ đơn hàng (₫)</th>
+                        <th width="20%">Tổng chi cho nhập hàng (₫)</th>
+                        <th width="20%">Doanh thu (₫)</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    {{#each product}}
+                    {{#each dateRevenue}}
                     <tr class="text-center align-middle">
-                        {{!-- <td class="align-middle text-left">{{_id}}</td> --}}
-                        <td class="align-middle text-left">{{name}}</td>
-                        <td><img src="{{cover}}" width="100px" height="150px"></td>
-                        {{!-- <td class="align-middle">20</td> --}}
-                        <td class="align-middle">{{fbaseprice}}₫</td>
-                        <td class="align-middle">{{fdiscountprice}}₫</td>
-                        <td class="align-middle">{{quantityAvailable}}</td>
-                        <td class="align-middle">
-                            <!-- <button class="btn btn-success"><i class="fas fa-edit"></i></button> -->
-                            <div class="dropdown">
-                                <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span><i class="fas fa-edit"></i></span>
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" id="dropdown-view-product"
-                                        href="/list-products/view/{{_id}}">Xem chi tiết</a>
-                                    <a class="dropdown-item" id="dropdown-edit-product"
-                                        href="/list-products/edit/{{_id}}">Chỉnh sửa</a>
-                                    <a class="dropdown-item" id="dropdown-delete-product"
-                                        href="/list-products/delete/{{_id}}">Xóa</a>
-                                </div>
-                            </div>
-                        </td>
+                        <td class="align-middle">{{index}}</td>
+                        <td>{{date}}</td>
+                        <td class="align-middle">{{numberOfOrders}}</td>
+                        <td class="align-middle text-right">{{dayTotalRevenue}}</td>
+                        <td class="align-middle text-right">{{totalCost}}</td>
+                        <td class="align-middle text-right">{{total}}</td>
                     </tr>
                     {{/each}}
                 </tbody>

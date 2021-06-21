@@ -16,7 +16,8 @@ const accountSchema = mongoose.Schema({
     token : {type: String, require: true},
     role: {type: mongoose.Schema.Types.ObjectId , require: true, ref: "Role"},
     DoB: {type: String},
-    gender: {type: String, enum: ['Nam', 'Nữ', 'Khác'], require: true}
+    gender: {type: String, enum: ['Nam', 'Nữ', 'Khác'], require: true},
+    lockDate: {type: Date}
 })
 
 accountSchema.plugin(mongoosePaginate);

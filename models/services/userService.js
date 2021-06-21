@@ -1,11 +1,12 @@
 const accountModel = require('../mongoose/accountModel');
 const roleModel = require('../mongoose/roleModel');
+const parameterModel = require('../mongoose/parameterModel');
 
 exports.getListAccounts = async (req, res, next) => {
     //const listAccs = await accountModel.find({});
-    const page=+req.query.page || 1;
-    const limit =10;
-    const offset =(page -1)*10;
+    const page = +req.query.page || 1;
+    const limit = 10;
+    const offset = (page - 1) * 10;
 
     const listAccs = await accountModel.find({}, null, { lean: true })
         .populate({ path: "role", model: "Role" }).skip(offset).limit(limit)
@@ -29,11 +30,33 @@ exports.getListAccounts = async (req, res, next) => {
     return newListAccs;
 }
 
+exports.checkUnlockDate = async (lockDate) => {
+    const nowDate = new Date();
+    const val = await parameterModel.parameterModel.findById("60c4dbc38883d632fcc11a07");
+
+    if (nowDate.getTime() >= (lockDate.getTime() + val * 24 * 60 * 60 * 1000)) {
+        console.log("Duoc phep truy cap");
+        return true;
+    }
+    return false;
+}
+
 exports.changeAccountState = async (req, res, next) => {
     if (req.query.id != req.query.myAccountID) {
-        await accountModel.findOneAndUpdate({ _id: req.query.id }, {
-            accountState: +req.query.accountState ? 0 : 1
-        });
+        let data;
+        if (Number(req.query.accountState)){
+            data = {
+                accountState: 0,
+                //lockDate = new Date(2021)
+            }
+        } else {
+            data = {
+                accountState: 1,
+                lockDate: Date.now()
+            }
+        }
+        console.log(data);
+        await accountModel.findOneAndUpdate({ _id: req.query.id }, data, {new: true});
     }
 
     const account = await accountModel.findOne({ _id: req.query.id })
@@ -60,7 +83,7 @@ exports.display = async (req, res, next) => {
 exports.changeAccountRole = async (req, res, next) => {
     if (req.query.id != req.query.myAccountID) {
         let newRole;
-        if (req.query.accountRole === "Admin"){
+        if (req.query.accountRole === "Admin") {
             newRole = "User";
         } else {
             newRole = "Admin"
@@ -79,8 +102,8 @@ exports.changeAccountRole = async (req, res, next) => {
         .exec().then((docs) => {
             return docs;
         });
-    
-    const roleName = account.role.roleName ;
+
+    const roleName = account.role.roleName;
 
     const accRole = {
         user: roleName === "User",
@@ -93,6 +116,6 @@ exports.changeAccountRole = async (req, res, next) => {
     return acc;
 }
 
-exports.count =async ()=>{
+exports.count = async () => {
     return await accountModel.countDocuments();
 }

@@ -3,14 +3,15 @@ const formidable = require('formidable');
 const mongoose = require('mongoose');
 
 const goodsReceivedNoteModel = require('../mongoose/goodsReceivedNoteModel');
-const productsService = require('../services/productsService');
+const productsService = require('./productsService');
+const revenueService = require('./revenueService');
 
 exports.addGoodsReceivedNoteToDB = async (req, res, next) => {
     const form = formidable({ multiples: true, maxFileSize: 20 * 1024 * 1024 });
     let _id = "";
     let postData = "";
 
-    await new Promise((resolve, reject) => {
+    const id = await new Promise((resolve, reject) => {
         form.parse(req, async (err, fields, files) => {
             if (err) {
                 return reject(err);
@@ -35,6 +36,10 @@ exports.addGoodsReceivedNoteToDB = async (req, res, next) => {
         });
     });
 
+    //Cập nhật doanh thu trong ngày
+    const data = await goodsReceivedNoteModel.goodsReceivedNoteModel.findById(id);
+    await revenueService.updateDateRevenueWithNewOrderGoodsReceivedNote(data.date, data.totalPrice);
+
     //Them chi tiet phieu nhap hang
     await new Promise(async (resolve, reject) => {
         //So luong san pham trong phieu nhap hang
@@ -51,9 +56,38 @@ exports.addGoodsReceivedNoteToDB = async (req, res, next) => {
 
             const newGoodsReceivedNoteDetail = new goodsReceivedNoteModel.goodsReceivedNoteDetailModel(product);
             await newGoodsReceivedNoteDetail.save();
+            //Cập nhật số lượng sản phẩm
             await productsService.updateProductQuantity(product.idProduct, product.quantity);
         }
 
         resolve();
     });
+}
+
+// month, year: Number
+// month: [1,12]
+exports.getGoodsReceivedNoteInMonth = async (month, year) => {
+    const startDate = new Date(year + "-" + month + "-" + 1);
+    const endDate = new Date(year, month, 0);
+    const end = endDate.getDate();
+    let result = [];
+
+    for (let i = 0; i < end; i++) {
+        result.push({ totalPrice: 0 });
+    }
+
+    const query = {
+        date: {
+            $gte: startDate,
+            $lt: endDate
+        }
+    };
+
+    const goodsReceivedNote = await goodsReceivedNoteModel.goodsReceivedNoteModel.find(query);
+
+    for (let i = 0; i < goodsReceivedNote.length; i++) {
+        result[goodsReceivedNote[i].date.getDate() - 1].totalPrice = goodsReceivedNote[i].totalPrice;//Check lại về ngày
+    }
+
+    return result;
 }
