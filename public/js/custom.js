@@ -284,26 +284,37 @@ const isEmpty = () => {
     }
 }
 
-const removeProduct = (productRow) => {
-    productRow.remove();
+const removeProduct = (product) => {
+    const totalPriceOneProduct = product.childNodes[5].childNodes[0].value;
+    console.log(product.childNodes[5].childNodes[0]);
+    product.remove();
 
-    let indexRow = document.getElementsByClassName('index-row');
     let price = document.getElementsByClassName('price-in-row');//Thành tiền
     let quantity = document.getElementsByClassName('quantity');//Số lượng
     let importPrice = document.getElementsByClassName('import-price');//Giá nhập
     let idProduct = document.getElementsByClassName('id-product');//product id
+    let productRow = document.getElementsByClassName('product-row');
 
     //Cập nhật stt va thuộc tính name của các thẻ input
-    for (let i = 0; i < indexRow.length; i++) {
-        indexRow[i].innerHTML = i + 1;
-        idProduct[i].name = 'idProduct' + (i + 1);
-        importPrice[i].name = 'productPrice' + (i + 1);
-        quantity[i].name = 'quantity' + (i + 1);
-        price[i].name = 'totalPriceOneProduct' + (i + 1);
+    const size = productRow.length;
+    let childNodes, index;
+
+    for (let i = 0; i < size; i++){
+        index = i + 1;
+        childNodes = productRow[i].childNodes;
+
+        childNodes[0].innerHTML = "<span class='index-row'>" + index + "</span>";
+        childNodes[0].setAttribute('class', "text-center");
+        childNodes[3].innerHTML = "<span><input type='number' class='import-price text-right w- form-control' min='0' value='" + importPrice[i].value + "' name='productPrice" + index + "' onchange='checkChange(" + index + ");' required/><span>";
+        childNodes[4].innerHTML = "<input type='number' class='quantity text-right w-60 form-control' min='1' style='margin:auto; display:block;' value='" +  quantity[i].value + "' name='quantity" + index + "' onchange='checkChange(" + index + ");' required/>";
+        childNodes[5].innerHTML = "<input class='price-in-row text-right border-0' style='outline: none !important;' name='totalPriceOneProduct" + index + "' value='" + price[i].value + "' readonly />";
+        childNodes[7].innerHTML = "<input class='id-product' hidden name='idProduct" + index +"' value='" + idProduct[i].value + "'/>"
     }
 
     document.getElementById("index").innerHTML = Number(document.getElementById("index").innerHTML) - 1;
     document.getElementById("size-note").value = index - 1;
+    let totalPrice = document.getElementById("total-price");
+    totalPrice.value = Number(totalPrice.value) - Number(totalPriceOneProduct);
 }
 
 const checkChange = (index) => {
@@ -335,8 +346,15 @@ const checkExist = (name) => {
     if (i == length) {
         return false;
     } else {
-        let quantity = document.getElementsByClassName('quantity');
+        let quantity = document.getElementsByClassName('quantity');//Số lượng
+        let price = document.getElementsByClassName('price-in-row');//Thành tiền
+        let totalPrice = document.getElementById("total-price");//Tổng chi
+        let importPrice = document.getElementsByClassName('import-price');//Giá nhập
+
         quantity[i].value = Number(quantity[i].value) + 1;
+        price[i].value = Number(quantity[i].value) * Number(importPrice[i].value);
+        totalPrice.value = Number(totalPrice.value) + Number(importPrice[i].value);
+        
         return true;
     }
 }
@@ -361,16 +379,13 @@ const setValueForRow = (idProduct, name, manufacturer, baseprice) => {
         cell3.innerHTML = manufacturer;
         cell4.innerHTML = "<span><input type='number' class='import-price text-right w- form-control' min='0' value='" + baseprice + "' name='productPrice" + index + "' onchange='checkChange(" + index + ");' required/><span>";
         cell5.innerHTML = "<input type='number' class='quantity text-right w-60 form-control' min='1' style='margin:auto; display:block;' value='1' name='quantity" + index + "' onchange='checkChange(" + index + ");' required/>";
-        cell6.innerHTML = "<input class='price-in-row text-right border-0' style='outline: none !important;' name='totalPriceOneProduct" + index + "' value='" + baseprice + "' readonly />";
+        cell6.innerHTML = "<input type='number' class='price-in-row text-right border-0' style='outline: none !important;' name='totalPriceOneProduct" + index + "' value='" + baseprice + "' readonly/>";
         cell7.innerHTML = "<div class='btn btn-danger remove-button' style='margin:auto; display:block;' onclick='removeProduct(" + "this.parentElement.parentElement" + ");'>Xóa</div>";
-        cell8.innerHTML = "<input class='id-product' name='idProduct" + index +"' value='" + idProduct + "'/>"
+        cell8.innerHTML = "<input class='id-product' hidden name='idProduct" + index +"' value='" + idProduct + "'/>"
 
         row.setAttribute('class', "align-middle product-row");
         cell1.setAttribute('class', "text-center");
         cell2.setAttribute('class', "product-name");
-        cell4.setAttribute('class', "text-center");
-        cell6.setAttribute('class', "into-money text-right");
-        cell8.setAttribute('hidden', "true");
 
         document.getElementById("index").innerHTML = index + 1;
         document.getElementById("size-note").value = index;
@@ -391,6 +406,6 @@ const closeEditInterface = () => {
    
 }
 
-const enableUpdateButton = () => {
-    Document.g
-}
+// const enableUpdateButton = () => {
+//     Document.g
+// }

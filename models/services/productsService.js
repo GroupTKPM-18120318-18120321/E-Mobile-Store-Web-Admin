@@ -29,7 +29,12 @@ exports.find = async (filter) => {
 }
 
 exports.findOne = async (filter) => {
-    const result = await productModel.findOne(filter);
+    const result = await productModel.findOne(filter)
+        .populate({ path: "idmanufacturer" })
+        .exec().then((docs) => {
+            return docs;
+        });
+    
     //console.log(result);
     return result;
 }
