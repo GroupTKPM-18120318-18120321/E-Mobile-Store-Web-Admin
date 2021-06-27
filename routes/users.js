@@ -6,6 +6,8 @@ const usersController = require('../controllers/usersController');
 /* GET users listing. */
 router.get('/', usersController.displayListAccounts);
 
+router.get('/get-account-quantity', usersController.getAccountQuantity);
+
 router.get('/accountState', usersController.changeAccountState);
 
 router.get('/account-role', usersController.changeAccountRole);

@@ -1,7 +1,9 @@
 const usersService = require('../models/services/userService');
 
 exports.displayListAccounts = async (req, res, next) => {
-    const accounts = await usersService.getListAccounts(req, res, next);
+    const data = await usersService.getListAccounts(req, res, next);
+    const accounts = data.newListAccs;
+    const userAccount = data.userAccount;
     const page=+req.query.page || 1;
     const limit =10;
     const offset =(page -1)*10;
@@ -19,6 +21,7 @@ exports.displayListAccounts = async (req, res, next) => {
 
     res.render('userAccounts/listAccounts', {
         accounts,
+        userAccount,
         pageItem: pageItem,
         isPagination: numPage>=2, 
         prevPage: page>=2?page-1:1, 
@@ -41,7 +44,13 @@ exports.displayDetailInfo = async (req, res, next) => {
 
 exports.changeAccountRole = async (req,res,next)=>{
     const account = await usersService.changeAccountRole(req, res, next);
-    console.log("role: " + account);
+    //console.log("role: " + account);
     res.json(account);
+}
+
+exports.getAccountQuantity = async (req,res,next) => {
+    const result = await usersService.getUserAccountQuantity();
+    console.log(result);
+    res.json(result);
 }
 

@@ -4,11 +4,11 @@ const productController= require('../controllers/productsController');
 
 router.post('/post-goods-received-note', productController.postGoodsReceivedNote);
 
-router.post('/add-new-product-nhap-hang', productController.addProductToDatabaseAndNhapHang);
+router.post('/add-new-product-for-goods-received-note', productController.addProductToDatabaseAndNhapHang);
 
-router.get('/lap-phieu-nhap-hang', productController.displayGoodsReceivedNote);
+router.get('/create-goods-received-note', productController.displayGoodsReceivedNote);
 
-router.get('/add-new-product-nhap-hang', productController.displayAddProductToNhapHang);
+router.get('/add-new-product-for-goods-received-note', productController.displayAddProductToNhapHang);
 
 router.get('/add-new-product', productController.displayAddProduct);
 

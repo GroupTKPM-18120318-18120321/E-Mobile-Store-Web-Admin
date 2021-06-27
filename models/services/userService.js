@@ -1,6 +1,21 @@
+const mongoose= require('mongoose');
+
 const accountModel = require('../mongoose/accountModel');
 const roleModel = require('../mongoose/roleModel');
 const parameterModel = require('../mongoose/parameterModel');
+
+exports.getUserAccountQuantity = async () => {
+    const total = await accountModel.find({});
+    const admin = await accountModel.find({role: mongoose.Types.ObjectId("5fe9b565ea0d1f18102eed2c")});
+    const user = total.length - admin.length - 1;
+    const lockedAcc = await accountModel.find({accountState: 1});
+    return {
+        total: total.length,
+        admin: admin.length,
+        user: user,
+        lockedAcc: lockedAcc.length
+    };
+}
 
 exports.getListAccounts = async (req, res, next) => {
     //const listAccs = await accountModel.find({});
@@ -26,8 +41,11 @@ exports.getListAccounts = async (req, res, next) => {
     })
 
     //const data = listAccs.push(accRole);
-
-    return newListAccs;
+    const userAccount = await this.getUserAccountQuantity();
+    return {
+        newListAccs: newListAccs,
+        userAccount: userAccount
+    };
 }
 
 exports.checkUnlockDate = async (lockDate) => {

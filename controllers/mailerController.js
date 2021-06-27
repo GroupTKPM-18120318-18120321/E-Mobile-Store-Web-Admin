@@ -17,8 +17,8 @@ exports.sendmail = async (req, res, next) => {
             resolve(hash)
         });
     })
-    console.log("sendmail");
-    console.log(account);
+    //console.log("sendmail");
+    //console.log(account);
     const mailer = await nodemailerService.configEmailToSend(account,OTP);
     const smtpTransport = (await mailer).smtpTransport;
     const mail = (await mailer).mail;
@@ -43,11 +43,11 @@ exports.displayFormAuth = async (req, res, next) => {
 exports.checkFormAuth = async (req, res, next) => {
 
     let account = adminAccountService.getTemporaryAccount(req, res, next);
-    console.log(account);
+    //console.log(account);
     if (account === "abc") {
         account = await adminAccountService.findOne("email", email);
-        console.log("CHECK FORM AUTH");
-        console.log(account);
+        //console.log("CHECK FORM AUTH");
+        //console.log(account);
         let checkOTP = await bcrypt.compare(account.name, req.body.maxacnhan);
         if (count === 1) {
             res.redirect("/mail/forgot-password");
@@ -90,10 +90,9 @@ exports.displayFormInputEmail = async (req, res, next) => {
 }
 
 exports.checkEmail = async (req, res, next) => {
-
     const account = await adminAccountService.findOne("email", req.body.Email);
-    email = req.body.Email;
-    console.log(account);
+    //email = req.body.Email;
+    //console.log(account);
     if (!account.id && account != null) {
         const OTP = await new Promise((resolve, reject) => {
             bcrypt.hash(account.name, saltRounds, function (err, hash) {
@@ -101,9 +100,9 @@ exports.checkEmail = async (req, res, next) => {
                 resolve(hash)
             });
         })
-        console.log("sendmail");
-        console.log(account);
-        console.log(OTP);
+        //console.log("sendmail");
+        //console.log(account);
+        //console.log(OTP);
         const mailer = await nodemailerService.configEmailToSend(account, OTP);
         const smtpTransport = (await mailer).smtpTransport;
         const mail = (await mailer).mail;

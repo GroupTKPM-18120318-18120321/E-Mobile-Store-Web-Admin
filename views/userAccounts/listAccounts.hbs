@@ -1,9 +1,96 @@
 <!-- DataTales Example -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Danh sách tài khoản người dùng</h1>
+    {{!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+            class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> --}}
+</div>
+
+<!-- Content Row -->
+<div class="row" id="userAccountQuantity">
+    <!--  -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Tổng số tài khoản</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"><b>{{userAccount.total}}</b></div>
+                    </div>
+                    <div class="col-auto">
+                        {{!-- <i class="fas fa-dollar-sign fa-2x text-gray-300"></i> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Số lượng tài khoản quản trị viên</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"><b>{{userAccount.admin}}</b></div>
+                    </div>
+                    <div class="col-auto">
+                        {{!-- <i class="fas fa-dollar-sign fa-2x text-gray-300"></i> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="vertical-line"></div>
+
+    <!--  -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Số lượng tài khoản người dùng
+                        </div>
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><b>{{userAccount.user}}</b></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        {{!-- <i class="fas fa-dollar-sign fa-2x text-gray-300"></i> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Số lượng tài khoản bị khóa</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"><b>{{userAccount.lockedAcc}}</b></div>
+                    </div>
+                    <div class="col-auto">
+                        {{!-- <i class="fas fa-dollar-sign fa-2x text-gray-300"></i> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="card shadow mb-4" id="loadTitle">
-    <div class="card-header py-3">
+    {{!-- <div class="card-header py-3">
         <h4 class="m-0 font-weight-bold text-primary">Danh sách tài khoản người dùng</h4>
         <br>
-    </div>
+    </div> --}}
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-hover table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -171,10 +258,10 @@
                         
                             \{{#if accountState}}
                                 <a class="dropdown-item hide-item"
-                                    onclick="changeAccountState('\{{_id}}','\{{accountState}}'); ">Mở khóa tài khoản</a>
+                                    onclick="changeAccountState('\{{_id}}','\{{accountState}}'); changeAccountQuantity();">Mở khóa tài khoản</a>
                             \{{else}}
                                 <a class="dropdown-item hide-item" id="dropdown-delete-product"
-                                    onclick="changeAccountState('\{{_id}}','\{{accountState}}');">Khóa tài khoản</a>
+                                    onclick="changeAccountState('\{{_id}}','\{{accountState}}'); changeAccountQuantity();">Khóa tài khoản</a>
                             \{{/if}}
                         
                     \{{/if}}
@@ -183,21 +270,21 @@
                 <div class=" superAdminMenu">
                     \{{#if accRole_user}}
                         <a class="dropdown-item hide-item" 
-                            onclick="changeAccountRole('\{{_id}}','\{{role}}'); ">Cấp quyền quản trị viên</a>
+                            onclick="changeAccountRole('\{{_id}}','\{{role}}'); changeAccountQuantity();">Cấp quyền quản trị viên</a>
                     \{{/if}}
                         
                     \{{#if accRole_admin}}
                         <a class="dropdown-item hide-item xoa-quyen" id="dropdown-delete-product"
-                        onclick="changeAccountRole('\{{_id}}','\{{role}}'); ">Xóa quyền quản trị viên</a>
+                        onclick="changeAccountRole('\{{_id}}','\{{role}}'); changeAccountQuantity();">Xóa quyền quản trị viên</a>
                     \{{/if}}
 
                     \{{#unless accRole_superAdmin}}
                         \{{#if accountState}}
                             <a class="dropdown-item hide-item"
-                                onclick="changeAccountState('\{{_id}}','\{{accountState}}'); ">Mở khóa tài khoản</a>
+                                onclick="changeAccountState('\{{_id}}','\{{accountState}}'); changeAccountQuantity();">Mở khóa tài khoản</a>
                         \{{else}}
                             <a class="dropdown-item hide-item" id="dropdown-delete-product"
-                                onclick="changeAccountState('\{{_id}}','\{{accountState}}');">Khóa tài khoản</a>
+                                onclick="changeAccountState('\{{_id}}','\{{accountState}}'); changeAccountQuantity();">Khóa tài khoản</a>
                         \{{/if}}
                     \{{/unless}}
                     
@@ -208,4 +295,83 @@
             </div>
         </div>
     </td>
+</script>
+
+<script type="text/x-handlebars-template" id="accountQuantity">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Tổng tài khoản</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"><b>\{{total}}</b></div>
+                    </div>
+                    <div class="col-auto">
+                        {{!-- <i class="fas fa-dollar-sign fa-2x text-gray-300"></i> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Số lượng tài khoản quản trị viên</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"><b>\{{admin}}</b></div>
+                    </div>
+                    <div class="col-auto">
+                        {{!-- <i class="fas fa-dollar-sign fa-2x text-gray-300"></i> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="vertical-line"></div>
+
+    <!--  -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Số lượng tài khoản người dùng
+                        </div>
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <div class="h5 mb-0 font-weight-bold text-gray-800"><b>\{{user}}</b></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        {{!-- <i class="fas fa-dollar-sign fa-2x text-gray-300"></i> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Số lượng tài khoản bị khóa</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"><b>\{{lockedAcc}}</b></div>
+                    </div>
+                    <div class="col-auto">
+                        {{!-- <i class="fas fa-dollar-sign fa-2x text-gray-300"></i> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </script>

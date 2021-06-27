@@ -147,18 +147,47 @@ $("tr.row-manufacturer").click(function () {
 //     //empty string means no validation error
 // }
 
+
+const changeAccountQuantity = () => {
+    const url = window.location.href + "/get-account-quantity";
+    const xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            const data = JSON.parse(this.responseText);
+            const script = document.getElementById('accountQuantity').innerHTML;
+            const template = Handlebars.compile(script);
+
+            const render = template({
+                total: data.total,
+                admin: data.admin,
+                user: data.user,
+                lockedAcc: data.lockedAcc,
+            });
+
+            document.getElementById("userAccountQuantity").innerHTML = render;
+        }
+    }
+
+    xhttp.open("GET", url, true);
+    xhttp.send();
+}
+
 const changeAccountState = (id, accountState) => {
     const myAccountID = document.getElementById("myAccountID").value;
     const url = window.location.href + "/accountState?id=" + id + "&accountState=" + accountState + "&myAccountID=" + myAccountID;
     //alert(`${id} ${accountState}`);
     const xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
+        //console.log(this);
         if (this.readyState == 4 && this.status == 200) {
+            //changeAccountQuantity();
+            //console.log(this);
             const data = JSON.parse(this.responseText);
             const script = document.getElementById('templateAccount').innerHTML;
             const template = Handlebars.compile(script);
 
-            console.log(data.account.accountState)
+            //.log(data.account.accountState)
             const render = template({
                 accountState: data.account.accountState,
                 _id: data.account._id,
@@ -173,7 +202,9 @@ const changeAccountState = (id, accountState) => {
             });
 
             document.getElementById(id).innerHTML = render;
-            setTitleYourAccount();
+
+            //Cập nhật số lượng các loại tài khoản
+            changeAccountQuantity();
         }
     }
 
@@ -183,7 +214,7 @@ const changeAccountState = (id, accountState) => {
 
 const changeAccountRole = (id, accountRole) => {
     const myAccountID = document.getElementById("myAccountID").value;
-    //alert(accountRole);
+
     const url = window.location.href + "/account-role?id=" + id + "&accountRole=" + accountRole + "&myAccountID=" + myAccountID;
     //alert(`${id} ${accountState}`);
     const xhttp = new XMLHttpRequest();
@@ -210,6 +241,8 @@ const changeAccountRole = (id, accountRole) => {
 
             document.getElementById(id).innerHTML = render;
             setTitleYourAccount();
+            //Cập nhật số lượng các loại tài khoản
+            changeAccountQuantity();
         }
     }
 
