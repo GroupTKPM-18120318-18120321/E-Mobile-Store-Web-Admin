@@ -25,26 +25,33 @@ function readOneURL(input) {
 }
 
 function readMultipleURL(input) {
-    if (input.files && input.files[0]) {
-        //console.log("inputfile = " + input.files)
+    $("img").remove(".detailImg");
+
+    if ($("#productDetailImg")[0].files.length > 3) {
+        alert("Chọn tối đa 3 ảnh chi tiết");
+        
         $("img").remove(".detailImg");
-        const l = input.files.length;
-
-        for (let i = 0; i < l; i++) {
-            const reader = new FileReader();
-
-            reader.onload = function (e) {
-                $($.parseHTML("<img width='100px' height='150px' class='mr-3'>")).attr("src", e.target.result).appendTo('#previewDetailImg').addClass("detailImg");
-            };
-
-            reader.readAsDataURL(input.files[i]);
+        $("#productDetailImg")[0].value = '';
+    } else {
+        if (input.files && input.files[0]) {
+            const l = input.files.length;
+    
+            for (let i = 0; i < l; i++) {
+                const reader = new FileReader();
+    
+                reader.onload = function (e) {
+                    $($.parseHTML("<img width='100px' height='150px' class='mr-3'>")).attr("src", e.target.result).appendTo('#previewDetailImg').addClass("detailImg");
+                };
+    
+                reader.readAsDataURL(input.files[i]);
+            }
+    
         }
-
+        else {
+            $("#productDetailImg")[0].value = '';
+        }
     }
-    else {
-        //alert($('.detailImg').length)
-        $("img").remove(".detailImg");
-    }
+    
 }
 
 function formatDate(dateStr) {
@@ -307,6 +314,11 @@ $(document).ready(function () {
     setTitleYourAccount();
     //disiableSubmitButton();
     closeEditInterface();
+
+    const table = document.getElementById("editParametersTable");
+    if (table != null){
+        handleEditParametersForm(table);
+    }
 });
 
 const isEmpty = () => {
@@ -439,6 +451,14 @@ const closeEditInterface = () => {
    
 }
 
-// const enableUpdateButton = () => {
-//     Document.g
-// }
+const handleEditParametersForm = (table) => {
+    for (let i = 1; i < table.rows.length; i++){
+        table.rows[i].cells[4].onclick = () => {
+            document.getElementsByName("parameterID")[0].value = table.rows[i].cells[0].children[0].value;
+            document.getElementsByName("parameterName")[0].value = table.rows[i].cells[1].children[0].value;
+            document.getElementsByName("value")[0].value = table.rows[i].cells[2].children[0].value;
+            document.getElementsByName("state")[0].value = table.rows[i].cells[3].children[0].value;
+            document.getElementById("editParametersForm").action = "/list-regulations/edit/" + table.rows[i].cells[0].children[0].value + "?_method=PUT";
+        }
+    }
+}

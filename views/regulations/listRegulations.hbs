@@ -45,7 +45,14 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <form action="" method="POST" id="editParametersForm" hidden>
+                <input type="hidden" name="_method" value="PUT">
+                <input name="parameterID" type="text" value="" required>
+                <input name="parameterName" type="text" value="" required>
+                <input name="value" type="number" value="" required>
+                <input name="state" value="" required>
+            </form>
+            <table class="table table-hover table-bordered" id="editParametersTable" width="100%" cellspacing="0">
                 <thead>
                     <tr class="text-center">
                         <th>Tên tham số</th>
@@ -57,56 +64,50 @@
 
                 <tbody>
                     {{#each parameter}}
-                    <form action="/list-regulations/edit/{{_id}}?_method=PUT" method="POST" id="{{_id}}">
-                        <input type="hidden" name="_method" value="PUT">
-                        <tr class="text-center align-middle">
-                            <input name="parameterID" value="{{_id}}" hidden>
-                            <td width="50%" class="align-middle text-left"><input name="parameterName" type="text"
-                                    class="form-control " value="{{parameterName}}" required /></td>
-                            <td width="20%" class="align-middle "><input name="value" type="number" min="0"
-                                    class="form-control text-right" value="{{value}}" required /></td>
-                            <td width="15%" class="align-middle">
-                                <select class="custom-select mr-sm-2" name="state" form="{{_id}}">
-                                    <option {{#if state}} selected="" {{/if}} value="true">Đang sử dụng</option>
-                                    <option {{#unless state}} selected="" {{/unless}} value="false">Không sử dụng
-                                    </option>
-                                </select>
-                            </td>
-                            <td width="15%" class="align-middle">
-                                <!--Edit Parameter Modal -->
-                                <div class="modal fade" id="editParameterModal" tabindex="-1" role="dialog"
-                                    aria-labelledby="editParameterModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-md" role="document">
-                                        <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="editParameterLabel">Xác nhận việc chỉnh sửa quy định
-                                                    </h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-danger"
-                                                        data-dismiss="modal">Hủy</button>
-                                                    <button type="submit" class="btn btn-primary">Đồng ý</button>
-                                                </div>
-                                            </form>
-                                        </div>
+                    <tr class="text-center align-middle">
+                        <td class="parameterID" hidden>
+                            <input value="{{_id}}" />
+                        </td>
+                        <td width="50%" class="align-middle text-left"><input type="text" class="form-control"
+                                value="{{parameterName}}" required /></td>
+                        <td width="20%" class="align-middle "><input type="number" min="0"
+                                class="form-control text-right" value="{{value}}" required /></td>
+                        <td width="15%" class="align-middle">
+                            <select class="custom-select mr-sm-2 state" form="editParametersForm">
+                                <option {{#if state}} selected="" {{/if}} value="true">Đang sử dụng</option>
+                                <option {{#unless state}} selected="" {{/unless}} value="false">Không sử dụng
+                                </option>
+                            </select>
+                        </td>
+                        <td width="15%" class="align-middle">
+                            <button class="btn btn-primary" type="button" id="editParameterButton" data-toggle="modal"
+                                data-target="#a">
+                                <span>Cập nhật</span>
+                            </button>
+                        </td>
+                        <div class="modal fade" id="a" tabindex="-1" role="dialog"
+                            aria-labelledby="editParameterModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-md" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editParameterLabel">Xác nhận việc chỉnh sửa
+                                            quy định
+                                        </h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
                                     </div>
-                                </div>
-                                <button class="btn btn-primary" type="button" id="editParameterButton"
-                                    data-toggle="modal" data-target="#editParameterModal">
-                                    <span>Cập nhật</span>
-                                </button>
-                                {{!-- <button class="btn btn-primary" type="submit">
-                                    Cập nhật
-                                </button> --}}
 
-                            </td>
-                        </tr>
-                    </form>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Hủy</button>
+                                        <button type="submit" class="btn btn-primary" form="editParametersForm">Đồng
+                                            ý</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </tr>
                     {{/each}}
                 </tbody>
             </table>

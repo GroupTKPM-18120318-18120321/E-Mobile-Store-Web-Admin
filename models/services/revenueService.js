@@ -10,9 +10,16 @@ const formatCurrency = (currency) => {
 	let result = "";
 	const arr = [];
 	let tmp;
-	if (currency < 1000) {
+	if (currency < 1000 && currency >= 0) {
 		result = String(currency);
 	} else {
+		let isNegativeNumber = false;
+		if (currency < 0){
+			isNegativeNumber = true;
+		}
+
+		currency = Math.abs(currency);
+
 		do {
 			tmp = currency % 1000;
 			if (tmp == 0) {
@@ -29,6 +36,10 @@ const formatCurrency = (currency) => {
 		} while (currency >= 1000);
 
 		arr.unshift(currency);
+
+		if (isNegativeNumber){
+			result += '-';
+		}
 
 		for (let i = 0; i < arr.length; i++) {
 			result += arr[i];
@@ -84,7 +95,7 @@ exports.updateDateRevenueWithNewOrder = async (date, order) => {
 
 }
 
-exports.updateDateRevenueWithNewOrderGoodsReceivedNote = async (date, totalPrice) => {
+exports.updateDateRevenueWithGoodsReceivedNote = async (date, totalPrice) => {
 	const startDate = new Date(date.getFullYear() + "-" + String(date.getMonth() + 1) + "-" + date.getDate());
 	const endDate = new Date(date.getFullYear() + "-" + String(date.getMonth() + 1) + "-" + String(date.getDate() + 1));
 	const query = {
@@ -228,10 +239,7 @@ exports.getListDateRevenue = async (month, year) => {
 exports.displayChartAndMonthRevenue = async (req) => {
 	let filter = req.query.filter;
 	let data = [];
-
-	//console.log(req.query.filter);
-
-	let monthRevenue;
+	//let monthRevenue;
 	let month;//thang truy van
 	let year;//nam truy van
 	const list = await this.getListActiveMonths();
@@ -243,55 +251,21 @@ exports.displayChartAndMonthRevenue = async (req) => {
 	const dateObj = String(filter).split("/");
 	month = Number(dateObj[0]);// month: [1,12]
 	year = Number(dateObj[1]);
-	const listOrders = await ordersModel.orderModel.find();
-	monthRevenue = await this.calcMonthRevenue(month, year, listOrders);
 	let listDateRevenue = await this.getListDateRevenue(month, year);
 
-	//console.log(listDateRevenue);
 	const now = new Date();
-
-	if (month === now.getUTCMonth()) {
-		todayRevenue = orderService.countOrderInDate(now);
-	}
 
 	const yearSales = await orderService.caculateRevenue("year", now.getFullYear());
 	const monthSales = await orderService.caculateRevenue("month", now.getMonth());
 	const daySales = await orderService.caculateRevenue("day", now.getDate());
 	const quarterSales = await orderService.caculateRevenue("quarter", Math.floor(now.getMonth() / 3));
 
-
-	const datamongoose = {};
-
-	if (filter === "year") {
-		//Tính doanh số trong 5 năm trở lại đây
-		for (let i = 0; i < 5; i++) {
-			datamongoose[now.getFullYear() - i] = await orderService.caculateRevenue("year", now.getFullYear() - i);
-		}
-	}
-	else if (filter === "month") {
-		//Tính doanh số của 12 tháng trong năm
-		for (let i = 0; i < 12; i++) {
-			datamongoose[i + 1] = await orderService.caculateRevenue("month", i)
-		}
-	}
-	else if (filter === "quarter") {
-		//Tính doanh số của 4 quý trong năm
-		for (let i = 0; i < 4; i++) {
-			datamongoose[i + 1] = await orderService.caculateRevenue("quarter", i)
-		}
-	}
-	else {
-		for (let i = 0; i < 12; i++) {
-			datamongoose[i + 1] = await orderService.caculateRevenue("month", i)
-		}
-	}
-
-	//const dateRevenue = await this.getListDateRevenue(month, year);
-
+	//Doanh thu thang = Tong thu tu don hang - Tong chi nhap hang
+	// let monthSales = 0;
 	for (let i = 0; i < listDateRevenue.length; i++) {
 		data.push({ index: i, label: listDateRevenue[i].index, num: listDateRevenue[i].total });
+		// += listDateRevenue[i].total;
 	}
-	//console.log("Data: \n" + data[0]);
 
 	//Định dạng lại cách hiển thị số tiền
 	for (let i = 0; i < listDateRevenue.length; i++) {
@@ -308,7 +282,7 @@ exports.displayChartAndMonthRevenue = async (req) => {
 		quarterSales: formatCurrency(quarterSales),
 		yearSales: formatCurrency(yearSales),
 		listActiveMonths: list,
-		revenue: monthRevenue,
+		//revenue: monthRevenue,
 		chartTitle: filter,
 		dateRevenue: listDateRevenue
 	}

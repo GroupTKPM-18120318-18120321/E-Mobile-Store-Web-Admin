@@ -104,7 +104,12 @@ exports.addNewProduct = async (req, res, next) => {
                 const mainImgLink = await this.uploadImg(coverImg, 'products');
                 const imgLinkArr = await this.uploadImgs(files.filenameArr, 'products');
 
-                console.log("arr: " + imgLinkArr);
+                //Kiem tra gia giam cua san pham
+                if (fields.productDiscountPrice == ""){
+                    fields.productDiscountPrice = fields.productBasePrice;
+                }
+
+                //console.log("arr: " + imgLinkArr);
                 const newPostData = {
                     name: fields.productName,
                     baseprice: fields.productBasePrice,

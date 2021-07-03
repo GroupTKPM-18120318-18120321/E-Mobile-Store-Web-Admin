@@ -57,5 +57,6 @@ exports.editRegulation = async (req, res, next) => {
         value: req.body.value,
         state: req.body.state
     }
-    await parametersModel.parameterModel.findByIdAndUpdate({ _id: req.body.parameterID }, data, { new: true });
+
+    await parametersModel.parameterModel.findByIdAndUpdate(req.body.parameterID, data, { new: true });
 }

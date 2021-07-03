@@ -38,7 +38,7 @@ exports.addGoodsReceivedNoteToDB = async (req, res, next) => {
 
     //Cập nhật doanh thu trong ngày
     const data = await goodsReceivedNoteModel.goodsReceivedNoteModel.findById(id);
-    await revenueService.updateDateRevenueWithNewOrderGoodsReceivedNote(data.date, data.totalPrice);
+    await revenueService.updateDateRevenueWithGoodsReceivedNote(data.date, data.totalPrice);
 
     //Them chi tiet phieu nhap hang
     await new Promise(async (resolve, reject) => {

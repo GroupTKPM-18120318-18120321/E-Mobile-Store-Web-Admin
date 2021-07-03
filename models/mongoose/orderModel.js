@@ -16,6 +16,7 @@ const orderSchema = mongoose.Schema({
     district: { type: String },
     city: { type: String },
     paymentMethod: { type: String },
+    deliveryCharge: {type: Number},
 }, {
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
@@ -59,7 +60,9 @@ orderSchema.virtual('ftotal').get(function () {
     return formatCurrency(this.total);
 });
 
-
+orderSchema.virtual('fdeliveryCharge').get(function () {
+    return formatCurrency(this.deliveryCharge);
+});
 
 orderSchema.virtual('orderTime').get(function () {
     const time = new Date(this.orderDate);
@@ -70,7 +73,7 @@ orderSchema.virtual('orderTime').get(function () {
 });
 
 orderSchema.virtual('deliveryTime').get(function () {
-    const time = new Date(this.orderDate);
+    const time = new Date(this.deliveryDate);
     const d = time.getDate();
     const m = time.getMonth() + 1;
     const y = time.getFullYear();

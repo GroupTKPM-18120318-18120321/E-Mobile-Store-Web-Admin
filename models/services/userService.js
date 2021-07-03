@@ -48,12 +48,13 @@ exports.getListAccounts = async (req, res, next) => {
     };
 }
 
-exports.checkUnlockDate = async (lockDate) => {
+exports.checkUnlockDate = async (_id, lockDate) => {
     const nowDate = new Date();
     const val = await parameterModel.parameterModel.findById("60c4dbc38883d632fcc11a07");
 
     if (nowDate.getTime() >= (lockDate.getTime() + val * 24 * 60 * 60 * 1000)) {
         console.log("Duoc phep truy cap");
+        await accountModel.findByIdAndUpdate(_id, {accountState: 0});
         return true;
     }
     return false;
