@@ -257,7 +257,6 @@ const changeAccountRole = (id, accountRole) => {
     xhttp.send();
 }
 
-
 function setTitleYourAccount() {
     const myAccountID = document.getElementById('myAccountID').value;
     const myAccountRole = document.getElementById('myAccountRole').value;
@@ -319,6 +318,10 @@ $(document).ready(function () {
     if (table != null){
         handleEditParametersForm(table);
     }
+});
+
+$(window).on("load",function(){
+    $('.loader-wrapper').fadeOut('slow');
 });
 
 const isEmpty = () => {
