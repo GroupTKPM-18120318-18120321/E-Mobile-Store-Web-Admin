@@ -32,25 +32,55 @@ exports.displayListAccounts = async (req, res, next) => {
 }
 
 exports.changeAccountState = async (req,res,next)=>{
-    const account = await usersService.changeAccountState(req, res, next);
-    //console.log(account);
-    res.json(account);
+    try {
+        const account = await usersService.changeAccountState(req, res, next);
+        //console.log(account);
+        if (account == null) {
+            let err = new Error("Not found");
+            err.status = 404;
+            throw err;
+        }
+        res.json(account);
+    } catch (err){
+        next(err);
+    }
+    
 }
 
 exports.displayDetailInfo = async (req, res, next) => {
-    const accountInfo = await usersService.display(req, res, next);
-    res.render('userAccounts/accountDetail', {accountInfo});
+    try {
+        const accountInfo = await usersService.display(req, res, next);
+        if (accountInfo == null){
+            let err = new Error("Not found");
+            err.status = 404;
+            throw err;
+        } else {
+            res.render('userAccounts/accountDetail', {accountInfo});
+        }  
+    } catch (err) {
+        next(err);
+    }
 }
 
 exports.changeAccountRole = async (req,res,next)=>{
-    const account = await usersService.changeAccountRole(req, res, next);
-    //console.log("role: " + account);
-    res.json(account);
+    try {
+        const account = await usersService.changeAccountRole(req, res, next);
+        //console.log("role: " + account);
+        if (account == null){
+            let err = new Error("Not found");
+            err.status = 404;
+            throw err;
+        } else {
+            res.json(account);
+        }
+    } catch(err){
+        next(err);
+    }
+    
 }
 
 exports.getAccountQuantity = async (req,res,next) => {
     const result = await usersService.getUserAccountQuantity();
-    console.log(result);
     res.json(result);
 }
 

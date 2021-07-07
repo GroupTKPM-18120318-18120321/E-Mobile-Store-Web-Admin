@@ -13,7 +13,11 @@ exports.addManufacturer = async (req, res, next) => {
 }
 
 exports.renameManufacturer = async (req, res, next) => {
-    await manufacturerService.rename(req, res, next);
-    res.redirect('/list-manufacturers');
+    try {
+        await manufacturerService.rename(req, res, next);
+        res.redirect('/list-manufacturers');
+    } catch (err) {
+        next(err);
+    }
 }
 

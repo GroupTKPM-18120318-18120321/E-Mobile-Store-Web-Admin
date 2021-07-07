@@ -74,7 +74,7 @@ exports.changeAccountState = async (req, res, next) => {
                 lockDate: Date.now()
             }
         }
-        console.log(data);
+
         await accountModel.findOneAndUpdate({ _id: req.query.id }, data, {new: true});
     }
 
@@ -109,7 +109,7 @@ exports.changeAccountRole = async (req, res, next) => {
         }
 
         const roleID = await roleModel.findOne({ roleName: newRole });
-        console.log("roleID: " + roleID);
+        //console.log("roleID: " + roleID);
 
         await accountModel.findOneAndUpdate({ _id: req.query.id }, {
             role: roleID._id
@@ -131,7 +131,7 @@ exports.changeAccountRole = async (req, res, next) => {
     }
 
     const acc = { account, accRole };
-    console.log("acc: " + acc);
+    //console.log("acc: " + acc);
     return acc;
 }
 

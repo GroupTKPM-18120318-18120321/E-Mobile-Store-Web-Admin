@@ -6,6 +6,10 @@ exports.displayListRegulations = async(req, res, next)=>{
 }
 
 exports.edit = async (req, res, next) => {
-    await regulationsService.editRegulation(req, res, next);
-    res.redirect("/list-regulations");
+    try {
+        await regulationsService.editRegulation(req, res, next);
+        res.redirect("/list-regulations");
+    } catch (err) {
+        next(err);
+    }
 };

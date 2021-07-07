@@ -2,25 +2,29 @@ const adminAccountService = require('../models/services/adminAccountService');
 const accountModel = require('../models/mongoose/accountModel');
 
 exports.displayAccInfo = async (req, res, next) => {
-    //console.log(req.user)
-    if(!req.user)
-    {
-        res.redirect('/login');
+    try {
+        if (!req.user) {
+            res.redirect('/login');
+        }
+        else {
+            const accountInfo = await adminAccountService.getAccInfo(req, res, next);
+            const genderSelector = await adminAccountService.getSelectedGender(req, res, next);
+            res.render('adminAccount/adminProfile', { accountInfo, genderSelector, setActiveChangePassTab: false });
+        }
+    } catch (err) {
+        next(err);
     }
-    else
-    {
- const accountInfo = await adminAccountService.getAccInfo(req, res, next);
-    const genderSelector = await adminAccountService.getSelectedGender(req, res, next);
-    res.render('adminAccount/adminProfile', {accountInfo, genderSelector, setActiveChangePassTab: false});
-    }
-   
 }
 
 exports.changeAvatar = async (req, res, next) => {
-    await adminAccountService.changeAvt(req, res, next);
-    const url = '/my-account/' + req.params.id;
+    try {
+        await adminAccountService.changeAvt(req, res, next);
+        const url = '/my-account/' + req.params.id;
 
-    res.redirect(url);
+        res.redirect(url);
+    } catch (err) {
+        next(err);
+    }
 }
 
 exports.displayLogin = async (req, res, next) => {
@@ -39,25 +43,35 @@ exports.displayLogin = async (req, res, next) => {
 }
 
 exports.editInfo = async (req, res, next) => {
-    await adminAccountService.editInfo(req, res, next);
+    try {
+        await adminAccountService.editInfo(req, res, next);
+        const url = '/my-account/' + req.params.id;
 
-    const url = '/my-account/' + req.params.id;
-    res.redirect(url);
+        res.redirect(url);
+    } catch (err) {
+        next(err);
+    }
 }
 
 exports.setActiveChangePasswordTab = async (req, res, next) => {
-    const accountInfo = await accountModel.findOne({_id: req.params.id});
-    res.render("adminAccount/adminProfile", {accountInfo, setActiveChangePassTab: true});
+    const accountInfo = await accountModel.findOne({ _id: req.params.id });
+    res.render("adminAccount/adminProfile", { accountInfo, setActiveChangePassTab: true });
 }
 
-exports.changePassword = async (req, res, next)=>{
-    const oldPassword = await adminAccountService.changePass(req, res, next);
+exports.changePassword = async (req, res, next) => {
+    try {
+        const oldPassword = await adminAccountService.changePass(req, res, next);
 
-    if (oldPassword){
-        const url = '/my-account/' + req.params.id;
-        res.redirect(url);
-    } else {
-        next();
+        if (oldPassword) {
+            const url = '/my-account/' + req.params.id;
+            res.redirect(url);
+        } else {
+            next();
+        }
+    } catch (err) {
+        console.log(err);
+        let error = new Error("Not found");
+        error.status = 404;
+        res.render('error', {error});
     }
-    
 }

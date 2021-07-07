@@ -209,7 +209,7 @@ const changeAccountState = (id, accountState) => {
             });
 
             document.getElementById(id).innerHTML = render;
-
+            setTitleYourAccount();
             //Cập nhật số lượng các loại tài khoản
             changeAccountQuantity();
         }

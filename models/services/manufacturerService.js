@@ -13,11 +13,9 @@ exports.add = async(req, res, next)=>{
 }
 
 exports.rename = async(req, res, next)=>{
-    //console.log(req.body.manufacturerId);
-    //console.log(req.body.newManufacturerName)
     await manufacturerModel.findOneAndUpdate({_id: req.body.manufacturerId}, {manufacturer: req.body.newManufacturerName}, {new: true}, (err, doc) => {
         if (err) {
-            console.log("Err Rename: " + err);
+            throw err;
         };
     });
 }

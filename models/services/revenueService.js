@@ -191,6 +191,10 @@ exports.getListDateRevenue = async (month, year) => {
 	let endDate;
 	const nowDate = new Date();
 
+	if (year > nowDate.getUTCFullYear() || year< 2021){
+		return null;
+	}
+
 	//Ngay cuoi cua thang xem doanh thu
 	if (nowDate.getUTCFullYear() === year && nowDate.getUTCMonth() + 1 === month) {
 		endDate = nowDate;
@@ -236,7 +240,7 @@ exports.getListDateRevenue = async (month, year) => {
 	return listDatesOfMonths;
 }
 
-exports.displayChartAndMonthRevenue = async (req) => {
+exports.displayChartAndMonthRevenue = async (req, res, next) => {
 	let filter = req.query.filter;
 	let data = [];
 	//let monthRevenue;
@@ -252,7 +256,11 @@ exports.displayChartAndMonthRevenue = async (req) => {
 	month = Number(dateObj[0]);// month: [1,12]
 	year = Number(dateObj[1]);
 	let listDateRevenue = await this.getListDateRevenue(month, year);
-
+	if (listDateRevenue == null){
+		let err = new Error("Not found");
+		err.status = 404;
+		throw err;
+	}
 	const now = new Date();
 
 	const yearSales = await orderService.caculateRevenue("year", now.getFullYear());
