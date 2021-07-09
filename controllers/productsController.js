@@ -28,11 +28,11 @@ exports.addProductToDatabaseAndNhapHang = async (req, res, next) => {
 
 exports.product = async (req, res, next) => {
     try {
-        const page = +req.query.page || 1;
+        let page = +req.query.page || 1;
         if (page < 0) page = 1;
 
         const limit = 6;
-        const offset = (page - 1) * 6;
+        let offset = (page - 1) * 6;
         const nameManufacturer = req.params.nameManufacturer;
         const nameProduct = req.query.nameProduct;
 
@@ -53,18 +53,33 @@ exports.product = async (req, res, next) => {
         }
 
         //Lấy dữ liệu
-        const paginate = await productsService.listProduct(filter, limit, offset);
+        let paginate = await productsService.listProduct(filter, limit, offset);
 
-        const pageItem = []
+        //Xử lý lỗi khi số trang vượt quá tổng số trang
+        if (page > paginate.totalPages){
+            page = paginate.totalPages;
+            offset = (page - 1) * 6;
+            paginate = await productsService.listProduct(filter, limit, offset);
+        }
+
+        const pageItem = [];
         for (let i = 1; i <= paginate.totalPages; i++) {
             const items = {
                 value: i,
-                isActive: i === page
+                isActive: i === page,
+                nameOfProduct: nameProduct
             }
             pageItem.push(items);
         }
 
         const manufacturers = await manufacturerService.getListManufacturer();
+
+        const nameOfProduct = nameProduct;
+        let noResultAvailable = false;
+
+        if (paginate.totalDocs == 0){
+            noResultAvailable = true;
+        }
 
         res.render('products/listProducts',
             {
@@ -74,7 +89,9 @@ exports.product = async (req, res, next) => {
                 nextPage: paginate.nextPage,
                 canGoPrev: paginate.hasPrevPage,
                 canGoNext: paginate.hasNextPage,
-                manufacturers
+                manufacturers,
+                nameOfProduct,
+                noResultAvailable
             });
     } catch (err) {
         next(err);
